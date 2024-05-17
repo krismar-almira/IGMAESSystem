@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Admin\AddressController;
+use App\Http\Controllers\Admin\DepartmentController;
 use App\Http\Controllers\Frontend\SurveyPageController;
 use App\Http\Controllers\Admin\Configuration\ConfigController;
 
@@ -27,7 +28,8 @@ Route::middleware(['AdminAccess'])->group(function () {
       Route::post('/province/add',[AddressController::class, 'AddProvince']);
       Route::post('/city/add',[AddressController::class, 'AddCity']);
     });
-    Route::prefix('/deparment')->group(function () {
+    Route::prefix('/department')->group(function () {
+      Route::post('/add',[DepartmentController::class,'Add']);
     });
   });
 });

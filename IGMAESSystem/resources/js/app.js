@@ -1,6 +1,7 @@
 import './bootstrap';
 import 'flowbite';
 import $, { isEmptyObject } from 'jquery';
+import { Modal } from 'flowbite';
 
 ('use strict');
 $(document).on('DOMContentLoaded', function () {
@@ -278,7 +279,90 @@ $(document).on('DOMContentLoaded', function () {
   //#endregion
 
   //#region 'department'
-  if (document.title === 'Configure Department') {
+  if (document.title === 'Department Settings') {
+    // set the modal menu element
+    let crud = 'add';
+    let department = { id: 0, name: '' };
+    const $targetEl = document.getElementById('crud-modal');
+    //console.log($targetEl);
+
+    function loadTable(){
+      
+    }
+    
+    // options with default values
+    const options = {
+      placement: 'top',
+      backdrop: 'dynamic',
+      backdropClasses: 'bg-gray-900/50 dark:bg-gray-900/80 fixed z-40',
+      closable: true,
+    };
+
+    // instance options object
+    const instanceOptions = {
+      id: 'crud-modal',
+      override: true,
+    };
+    const modal = new Modal($targetEl, options, instanceOptions);
+    //modal.toggle();
+    $(document).on('click', '#btn_add_new', () => {
+      modal.toggle();
+      console.log('btn add new');
+      crud = 'add';
+      Crud(crud);
+    });
+    $(document).on('click', '.btn_toggle', () => {
+      modal.toggle();
+      console.log('btn click');
+    });
+    $(document).on('click', '#btn_submit', () => {
+      //modal.toggle();
+      ConfirmaDailog('add', 'Are you sure you wan to add this?', (element) => {
+        if (!element) {
+          Toast('error', 'Action cancelled.');
+        } else {
+          Save((success) => {
+            if (success) {
+              Toast('success', 'Saved successfuly.');
+            } else {
+              Toast('error', 'Check your input.');
+            }
+          });
+        }
+      });
+      console.log('btn click');
+    });
+    function Crud(crud) {
+      if (crud === 'add') {
+        $('#modal_title').html('New');
+        console.log($('#modal_title'));
+      } else if (crud === 'edit') {
+        $('#modal_title').html('Edit');
+      }
+    }
+    function Save(callback) {
+      if (crud === 'add') {
+        department['id'] = 0;
+        department['name'] = $('#department_name').val();
+        console.log(department);
+        $.ajax({
+          type: 'POST',
+          url: `/admin/department/${crud}`,
+          data: department,
+          headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+          },
+          success: function (data) {
+            console.log(data);
+            callback(true);
+          },
+          error: function (data) {
+            console.log(data);
+            callback(false);
+          },
+        });
+      }
+    }
   }
   //
 });

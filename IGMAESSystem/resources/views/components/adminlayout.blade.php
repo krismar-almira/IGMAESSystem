@@ -10,7 +10,7 @@
 </head>
 <body>
 
-<nav class="fixed top-0 right-0 z-40 left-0 h-12 bg-white flex align-middle items-center shadow-sm">
+<nav class="fixed top-0 right-0 left-0 h-12 bg-white flex align-middle items-center shadow-sm">
 
   <div class="hidden sm:flex w-64 items-center px-3">
     <img src="/image/DENRLOGO.png" class="w-10" alt="">
@@ -164,13 +164,11 @@
   </div>
 </aside>
 
-<div class="fixed top-9 right-0 bottom-0 left-0 sm:left-64 bg-slate-50 overflow-auto">
-  <div class="w-full h-full relative">
-
+<div class="fixed top-12 right-0 bottom-0 left-0 sm:left-64 bg-slate-50 overflow-hidden">
+  <div class="w-full h-full relative overflow-auto">
     <div id='infinite_loading' class="loader-line hidden fixed"></div>
     <div id='toaster_id' class="absolute right-0 opacity-90 p-2"></div>
-    <div id='confirmation_dialog' class="fixed hidden flex top-0 right-0 left-0 bottom-10 z-50 justify-center items-center">
-    
+    <div id='confirmation_dialog' class="fixed hidden flex top-12 right-0 left-0 bottom-10 z-50 justify-center items-center sm:left-64">
     </div>
     {{$slot}}
   </div>
