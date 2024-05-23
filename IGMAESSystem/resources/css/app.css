@@ -2,6 +2,21 @@
 @tailwind components;
 @tailwind utilities;
 
+table {
+  @apply p-2 w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 !important;
+}
+thead {
+  @apply text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 !important;
+}
+tr {
+  @apply odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700 !important;
+}
+th {
+  @apply px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white !important;
+}
+#dt-length-0 {
+  @apply w-16 !important;
+}
 .lb-input-sm {
   @apply block text-sm font-medium text-gray-900 dark:text-white;
 }

@@ -1,7 +1,7 @@
-<x-layout title="Login">
+<x-layout title="IGMAES Login">
 <div class="w-full h-lvh bg-gradient bg-opacity-20 justify-center flex items-center">
   <div class="w-full max-w-sm bg-clip bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 mb-20">
-    <h1 class="mb-5 mt-5 text-center text-gray-500 tracking-widest font-mono font-semibold text-2xl">LOGIN</h1>
+    <h1 class="mb-5 mt-5 text-center text-gray-500 tracking-widest font-mono font-semibold text-2xl">IGMAES</h1>
     <form action="/login" class="px-5" method="POST">
       @csrf
       <div class="relative z-0 w-full group mb-5">

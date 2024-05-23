@@ -33,7 +33,7 @@ class LoginController extends Controller
                             ])
     ){
         $request->session()->regenerate();
-        return redirect('/admin');
+        return redirect('/admin/dashboard');
     }
     return redirect()->back();
   }

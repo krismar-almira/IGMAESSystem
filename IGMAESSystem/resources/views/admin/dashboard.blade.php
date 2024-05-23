@@ -1,0 +1,1 @@
+<x-adminlayout title="Dashboard"></x-adminlayout>
