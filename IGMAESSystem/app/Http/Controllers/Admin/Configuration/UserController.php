@@ -50,7 +50,12 @@ class UserController extends Controller
     ->orWhere('user_levels.name','like', '%'.$request['search']['value'].'%')
     ->orWhere('users.designation','like', '%'.$request['search']['value'].'%')
     ->offset($request['start'])->limit($request['length'])->get();
-    $recordsFiltered = DB::table('users')->where('users.name', 'like', '%'.$request['search']['value'].'%')->count();
+    $recordsFiltered = DB::table('users')->join('user_levels', 'user_levels.id', '=', 'users.user_level_id')
+    ->select('users.name', 'users.address', 'users.designation', 'user_levels.name as userlevel')
+    ->where('users.name', 'like', '%'.$request['search']['value'].'%')
+    ->orWhere('user_levels.name','like', '%'.$request['search']['value'].'%')
+    ->orWhere('users.designation','like', '%'.$request['search']['value'].'%')
+    ->count();
   }else{
     $datas = DB::table('users')->join('user_levels', 'user_levels.id', '=', 'users.user_level_id')
     ->select('users.name', 'users.address', 'users.designation', 'user_levels.name as userlevel')
@@ -70,5 +75,13 @@ class UserController extends Controller
   $val->recordsFiltered = $recordsFiltered;
   $val->data= $arrays;
     return response()->json($val);;
+  }
+  function UserSeatch(Request $request){
+    $datas = DB::table('users')
+    ->select('users.id as id','users.name')
+    ->where('users.name', 'like','%'.$request['term'].'%')
+    ->limit('10')
+    ->get();
+    return response()->json($datas);
   }
 }

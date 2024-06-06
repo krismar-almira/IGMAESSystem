@@ -1,3 +1,4 @@
+const delay = (ms) => new Promise((res) => setTimeout(res, ms));
 function StartLoading() {
   $('#infinite_loading').removeClass('hidden');
 }

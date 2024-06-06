@@ -20,6 +20,8 @@ class user_seeder extends Seeder
           'password' => Hash::make('sa'),
           'address' => 'antique',
           'contact_no' => '092229',
+          'location' => 'na',
+          'filename' => 'na',
           'designation' => 'super admin',
           'username'=>'sa',
           'user_level_id' => 1,

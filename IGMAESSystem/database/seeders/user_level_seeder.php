@@ -19,7 +19,7 @@ class user_level_seeder extends Seeder
         ['id'=>1, 'name'=>'SA'],
         ['id'=>2, 'name'=>'Admin'],
         ['id'=>3, 'name'=>'Employee'],
-        ['id'=>4, 'name'=>'Parnet Store'],
+        ['id'=>4, 'name'=>'Partner Store'],
       ];
       UserLevel::insert($data);
     }

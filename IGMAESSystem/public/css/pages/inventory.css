@@ -1,0 +1,19 @@
+#crud_modal {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.hidden1 {
+  visibility: hidden !important;
+}
+@media (min-width: 768px) {
+  #crud_modal {
+    left: 16rem;
+  }
+}

@@ -29,7 +29,14 @@ $(function () {
   });
   async function asyncSave(formdata) {
     StartLoading();
-    console.log(await Save(formdata));
+    //console.log(await Save(formdata));
+    try {
+      await Save(formdata);
+      Toast('success', 'Successfully save!');
+      $('#registration_form')[0].reset();
+    } catch {
+      Toast('error2', 'Email is already inused!');
+    }
     CloseLoading();
   }
   function Save(formdata) {
