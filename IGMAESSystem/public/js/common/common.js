@@ -106,7 +106,7 @@ const ConfirmaDailog = (action, message, callback) => {
   action = String(action).toUpperCase();
   let _confirm = false;
   $('#confirmation_dialog').html('');
-  let content = `<div class="relative p-4 w-full max-w-md max-h-full mb-36">
+  let content = `<div style='z-index:100;' class="relative p-4 w-full max-w-md max-h-full mb-36">
                     <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
                         <div class="p-4 md:p-5 text-center">
                             <h2 id="confirm-crud" class="mb-3 font-mono font-semibold text-gray-600">${action}</h2>

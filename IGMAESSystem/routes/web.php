@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\InventoryPageController;
 use App\Http\Controllers\Admin\UserRegistrationController;
 use App\Http\Controllers\Admin\Configuration\UserController;
 use App\Http\Controllers\Admin\Configuration\ProductController;
+use App\Http\Controllers\Admin\Configuration\InventoryController;
 use App\Http\Controllers\Admin\Configuration\UserLevelController;
 
 
@@ -32,6 +33,12 @@ Route::middleware(['AdminAccess'])->group(function () {
     });
     Route::prefix('inventory')->group(function(){
       Route::get('/',[InventoryPageController::class,'index']);
+    });
+
+    Route::prefix('inventory')->group(function(){
+      Route::post('/save',[InventoryController::class,'Save']);
+      Route::get('/table',[InventoryController::class,'Table']);
+
     });
     Route::prefix('product')->group(function(){
       Route::get('/',[ProductController::class, 'All']);

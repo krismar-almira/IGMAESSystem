@@ -19,15 +19,21 @@ class ProductController extends Controller
     if($request['search']['value']!=null){
       $datas = DB::table('products')
       ->select('products.id','products.location','products.name', 'products.type', DB::raw('0 as quantity'), 'products.price')
-      ->where('products.name', 'like','%'.$request['search']['value'].'%')
-      ->orWhere('products.type', 'like','%'.$request['search']['value'].'%')
+      ->where(function($query) use($request) {
+          $query->where('products.name', 'like','%'.$request['search']['value'].'%')
+          ->orWhere('products.type', 'like','%'.$request['search']['value'].'%');
+      })
+      // ->where('products.name', 'like','%'.$request['search']['value'].'%')
+      // ->orWhere('products.type', 'like','%'.$request['search']['value'].'%')
       ->where('products.isActive', '<>', 'false')
       ->offset($request['start'])->limit($request['length'])
       ->get();
       $recordsFiltered =DB::table('products')
       ->select('products.name', 'products.type', DB::raw('0 as quantity'), 'products.price')
-      ->where('products.name', 'like','%'.$request['search']['value'].'%')
-      ->orWhere('products.type', 'like','%'.$request['search']['value'].'%')
+      ->where(function($query) use($request) {
+          $query->where('products.name', 'like','%'.$request['search']['value'].'%')
+          ->orWhere('products.type', 'like','%'.$request['search']['value'].'%');
+      })
       ->where('products.isActive', '<>', 'false')
       ->count();
     }
@@ -36,7 +42,6 @@ class ProductController extends Controller
       ->select('products.id','products.location','products.name', 'products.type', DB::raw('0 as quantity'), 'products.price')
       ->where('products.isActive', '<>', 'false')
       ->offset($request['start'])->limit($request['length'])
-      ->where('products.isActive', '<>', 'false')
       ->get();
       $recordsFiltered = DB::table('products')
       ->where('products.isActive', '<>', 'false')
@@ -123,6 +128,7 @@ class ProductController extends Controller
     $datas = DB::table('products')
     ->select('products.id','products.location','products.name', 'products.type', DB::raw('0 as quantity'), 'products.price')
     ->where('products.name', 'like','%'.$request['term'].'%')
+    ->where('products.isActive', '<>', 'false')
     ->limit('10')
     ->get();
     return response()->json($datas);

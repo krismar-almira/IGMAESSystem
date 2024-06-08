@@ -7,7 +7,7 @@ $(function () {
   const options = {
     placement: 'center-center',
     backdrop: 'dynamic',
-    backdropClasses: 'bg-gray-900/50 dark:bg-gray-900/80 fixed z-40',
+    backdropClasses: 'bg-gray-900/50 dark:bg-gray-900/80 fixed z-10 hidden',
     closable: true,
     onHide: () => {
       console.log('modal is hidden');
@@ -73,7 +73,7 @@ $(function () {
     $('#unit_of_measure').val(data['unit_measure']);
     $('#description').val(data['description']);
   }
-  $(':submit').on('click', function (e) {
+  $(':submit').one('click', function (e) {
     e.preventDefault();
     ConfirmaDailog(
       'Add',
