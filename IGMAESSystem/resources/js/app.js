@@ -2,6 +2,8 @@ import './bootstrap';
 import 'flowbite';
 import $, { isEmptyObject } from 'jquery';
 import { Modal } from 'flowbite';
+import '@fortawesome/fontawesome-free/css/all.css';
+import Datepicker from 'flowbite-datepicker/Datepicker';
 
 ('use strict');
 $(document).on('DOMContentLoaded', function () {
@@ -286,10 +288,8 @@ $(document).on('DOMContentLoaded', function () {
     const $targetEl = document.getElementById('crud-modal');
     //console.log($targetEl);
 
-    function loadTable(){
-      
-    }
-    
+    function loadTable() {}
+
     // options with default values
     const options = {
       placement: 'top',

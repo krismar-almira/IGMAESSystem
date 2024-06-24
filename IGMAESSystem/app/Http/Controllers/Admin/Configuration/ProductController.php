@@ -18,7 +18,8 @@ class ProductController extends Controller
     //image, name, type, quantity, price
     if($request['search']['value']!=null){
       $datas = DB::table('products')
-      ->select('products.id','products.location','products.name', 'products.type', DB::raw('0 as quantity'), 'products.price')
+      ->select('products.id','products.location','products.name', 'products.type', DB::raw('SUM(inventories.quantity) as quantity'), 'products.price')
+      ->join('inventories', 'inventories.product_id','products.id')
       ->where(function($query) use($request) {
           $query->where('products.name', 'like','%'.$request['search']['value'].'%')
           ->orWhere('products.type', 'like','%'.$request['search']['value'].'%');
@@ -27,6 +28,7 @@ class ProductController extends Controller
       // ->orWhere('products.type', 'like','%'.$request['search']['value'].'%')
       ->where('products.isActive', '<>', 'false')
       ->offset($request['start'])->limit($request['length'])
+      ->groupBy('products.id')
       ->get();
       $recordsFiltered =DB::table('products')
       ->select('products.name', 'products.type', DB::raw('0 as quantity'), 'products.price')
@@ -39,9 +41,11 @@ class ProductController extends Controller
     }
     else{
       $datas = DB::table('products')
-      ->select('products.id','products.location','products.name', 'products.type', DB::raw('0 as quantity'), 'products.price')
+      ->select('products.id','products.location','products.name', 'products.type', DB::raw('SUM(inventories.quantity) as quantity'), 'products.price')
+      ->join('inventories', 'inventories.product_id','products.id')
       ->where('products.isActive', '<>', 'false')
       ->offset($request['start'])->limit($request['length'])
+      ->groupBy('products.id')
       ->get();
       $recordsFiltered = DB::table('products')
       ->where('products.isActive', '<>', 'false')
@@ -57,9 +61,9 @@ class ProductController extends Controller
     foreach ($datas as $data) {
       $array=[
         "<img class='shadow-sm border-2' style='width:60px; height:60px; object-fit:cover; border-radius:50%;' src='/{$data->location}' alt='image description'>",
-        "{$data->name}",
+        $data->name,
         $data->type,
-        0,
+        $data->quantity,
         $data->price,
         "<div class='w-10'><button id='dropdownMenuIconButton' data-dropdown-toggle='dropdownDots_{$data->id}' class='inline-flex items-center p-2 text-sm font-medium text-center text-gray-900 bg-white rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none dark:text-white focus:ring-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-600' type='button'>
         <svg class='w-5 h-5' aria-hidden='true' xmlns='http://www.w3.org/2000/svg' fill='currentColor' viewBox='0 0 4 15'>

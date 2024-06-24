@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\ProductPageController;
 use App\Http\Controllers\Admin\InventoryPageController;
 use App\Http\Controllers\Admin\UserRegistrationController;
 use App\Http\Controllers\Admin\Configuration\UserController;
+use App\Http\Controllers\Admin\Configuration\PayrollController;
 use App\Http\Controllers\Admin\Configuration\ProductController;
 use App\Http\Controllers\Admin\Configuration\InventoryController;
 use App\Http\Controllers\Admin\Configuration\UserLevelController;
@@ -37,6 +38,8 @@ Route::middleware(['AdminAccess'])->group(function () {
 
     Route::prefix('inventory')->group(function(){
       Route::post('/save',[InventoryController::class,'Save']);
+      Route::post('/update',[InventoryController::class,'Update']);
+      Route::get('/get',[InventoryController::class,'Get']);
       Route::get('/table',[InventoryController::class,'Table']);
 
     });
@@ -46,10 +49,10 @@ Route::middleware(['AdminAccess'])->group(function () {
       Route::post('/',[ProductController::class, 'AddNew']);
       Route::post('/update',[ProductController::class, 'AddNew']);
       Route::delete('/{id}',[ProductController::class, 'Delete']);
-
       Route::get('/id/{id}',[ProductController::class, 'GetProductById']);
-
-
+    });
+    Route::prefix('/payroll')->group(function(){
+      Route::get('/',[PayrollController::class, 'index']);
     });
     Route::prefix('user')->group(function () {
       Route::post('/',[UserController::class,'save']);
