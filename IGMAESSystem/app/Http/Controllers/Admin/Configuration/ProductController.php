@@ -19,7 +19,7 @@ class ProductController extends Controller
     if($request['search']['value']!=null){
       $datas = DB::table('products')
       ->select('products.id','products.location','products.name', 'products.type', DB::raw('SUM(inventories.quantity) as quantity'), 'products.price')
-      ->join('inventories', 'inventories.product_id','products.id')
+      ->leftJoin('inventories', 'inventories.product_id','products.id')
       ->where(function($query) use($request) {
           $query->where('products.name', 'like','%'.$request['search']['value'].'%')
           ->orWhere('products.type', 'like','%'.$request['search']['value'].'%');
@@ -42,7 +42,7 @@ class ProductController extends Controller
     else{
       $datas = DB::table('products')
       ->select('products.id','products.location','products.name', 'products.type', DB::raw('SUM(inventories.quantity) as quantity'), 'products.price')
-      ->join('inventories', 'inventories.product_id','products.id')
+      ->leftJoin('inventories', 'inventories.product_id','products.id')
       ->where('products.isActive', '<>', 'false')
       ->offset($request['start'])->limit($request['length'])
       ->groupBy('products.id')

@@ -131,3 +131,48 @@ const ConfirmaDailog = (action, message, callback) => {
     callback(true);
   });
 };
+function getMonth(x) {
+  const months = [
+    'Jan.',
+    'Feb.',
+    'Mar.',
+    'April',
+    'May',
+    'June',
+    'July',
+    'Aug.',
+    'Sept.',
+    'Oct.',
+    'Nov.',
+    'Dec.',
+  ];
+  return months[x - 1];
+}
+function formatDate(dateString) {
+  const months = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ];
+
+  // Split the input date string
+  const [year, month, day] = dateString.split('-');
+
+  // Create a new date object
+  const date = new Date(year, month - 1, day);
+
+  // Get the month name from the months array
+  const monthName = months[date.getMonth()];
+
+  // Construct the formatted date string
+  return `${monthName} ${day}, ${year}`;
+}

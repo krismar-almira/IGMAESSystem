@@ -159,6 +159,8 @@
 <script src="/js/common/common.js"></script>
 <script src="/js/datable2.7.js"></script>
 <script src="/js/select2.js"></script>
+<script src="/js/chart.js"></script>
+
 <script>
   (function($) {
   var Defaults = $.fn.select2.amd.require('select2/defaults');

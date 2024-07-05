@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\Configuration\InventoryController;
 use App\Http\Controllers\Admin\Configuration\UserLevelController;
 
 
+
 Route::get('/login',[LoginController::class,'ViewLoginPage']);
 Route::post('/login', [LoginController::class,'Login']);
 Route::post('/logout', [LoginController::class,'Logout']);
@@ -23,8 +24,8 @@ Route::middleware(['AdminAccess'])->group(function () {
   Route::prefix('/admin')->group(function () {
     Route::prefix('/dashboard')->group(function () {
       Route::get('/', [DashboardController::class, 'index']);
+      Route::get('/production', [DashboardController::class, 'production']);
     });
-    
     Route::prefix('user')->group(function () {
       Route::get('/registration',[UserRegistrationController::class, 'index']);
       Route::get('/users',[UsersPageController::class, 'index']);
@@ -53,13 +54,19 @@ Route::middleware(['AdminAccess'])->group(function () {
     });
     Route::prefix('/payroll')->group(function(){
       Route::get('/',[PayrollController::class, 'index']);
+      Route::get('/id',[PayrollController::class, 'getbyid']);
+      Route::post('/save',[PayrollController::class,'save']);
+      Route::get('/table',[PayrollController::class,'table']);
+      Route::get('/getinitial',[PayrollController::class, 'GetInitial']);
+      Route::get('/report/{id}',[PayrollController::class,'report']);
+
     });
     Route::prefix('user')->group(function () {
       Route::post('/',[UserController::class,'save']);
       Route::get('/',[UserController::class,'All']);
-      Route::get('/search',[UserController::class,'UserSeatch']);
-      
+      Route::get('/search',[UserController::class,'UserSearch']);
       Route::post('/logout',[UserController::class,'logout']);
+      Route::get('/getallemployee',[UserController::class, 'GetAllEmployee']);
     });
     //Route::get('/', [UserLevelController::class, 'GetAll']);
     Route::get('/userlevel', [UserLevelController::class, 'GetAll']);

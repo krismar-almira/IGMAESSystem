@@ -241,13 +241,24 @@ $(function () {
     ordering: false,
     scrollCollapse: true,
     scrollY: 'calc(100vh - 350px)',
-    ajax: '/admin/inventory/table',
+    ajax: {
+      url: '/admin/inventory/table',
+      type: 'GET',
+      dataSrc: function (json) {
+        for (let i = 0; i < json.data.length; i++) {
+          json.data[i][5] = formatDate(json.data[i][5]); // Example transformation
+          json.data[i][6] = formatDate(json.data[i][6]); // Example transformation
+        }
+        return json.data;
+      },
+    },
     initComplete: function (settings, json) {
       //alert('DataTables has finished its initialisation.');
       //DropDownListener();
     },
     columns: [
       { visible: false, searchable: false },
+      { visible: true, searchable: false },
       { visible: true, searchable: false },
       { visible: true, searchable: false },
       { visible: true, searchable: false },

@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
@@ -76,12 +77,34 @@ class UserController extends Controller
   $val->data= $arrays;
     return response()->json($val);;
   }
-  function UserSeatch(Request $request){
+  function UserSearch(Request $request){
     $datas = DB::table('users')
     ->select('users.id as id','users.name')
+    ->join('user_levels','users.user_level_id','=','user_levels.id')
+    ->where('user_levels.name', '=', 'employee')
     ->where('users.name', 'like','%'.$request['term'].'%')
     ->limit('10')
     ->get();
     return response()->json($datas);
+  }
+  function GetAllEmployee(Request $request){
+    $validator = Validator::make($request->all(), [
+        'startDate' => 'required|date',
+        'endDate' => 'required|date',
+    ]);
+    if($validator->fails()){
+      return response()->json('invalid date', 402);
+    }
+    $users = DB::table('group_workers')
+    ->select('users.id as id','users.name',DB::raw('SUM(group_workers.employee_share) as salary'))
+    ->leftJoin('users','users.id','=','group_workers.user_id')
+    ->leftJoin('inventories','inventories.id','=','group_workers.inventory_id')
+    ->leftJoin('user_levels', 'users.user_level_id','=', 'user_levels.id')
+    ->where('user_levels.name', '=', 'employee')
+    ->whereDate('inventories.date_entry', '>=', $request['startDate'])
+    ->whereDate('inventories.date_entry', '<=', $request['endDate'])
+    ->groupBy('users.id', 'users.name')
+    ->get();
+    return response()->json($users);
   }
 }
