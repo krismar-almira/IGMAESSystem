@@ -1,30 +1,9 @@
 'use strict';
 
 $(function () {
-  const ctx = document.getElementById('myChart');
-  new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-      datasets: [
-        {
-          label: '# of Votes',
-          data: [12, 19, 3, 5, 2, 3],
-          borderWidth: 1,
-        },
-      ],
-    },
-    options: {
-      scales: {
-        y: {
-          beginAtZero: true,
-        },
-      },
-    },
-  });
-
   const ctx1 = document.getElementById('myChart1');
-
+  loadproductiontable();
+  loadTopSellingTable();
   new Chart(ctx1, {
     type: 'bar',
     data: {
@@ -67,7 +46,6 @@ $(function () {
       },
     },
   });
-  loadproductiontable();
   let colors = [
     'rgb(255, 99, 132)',
     'rgb(255, 159, 64)',
@@ -179,5 +157,52 @@ $(function () {
       ).values(),
     ];
     initializeproduction(name_products, uniqueYearMonths, datas);
+  }
+  $('.container-2').on('click', function () {
+    $('.container-2').toggleClass('oversize-container-2');
+  });
+  async function loadTopSellingTable() {
+    let res = await fetchTopSellingData();
+    let _html = '';
+    res.forEach((arr) => {
+      _html += `<li class="pb-2 pt-1 pl-2 hover:bg-slate-300 rounded">
+                  <div class="flex items-center space-x-4 rtl:space-x-reverse">
+                    <div class="flex-shrink-0">
+                      <img
+                        class="w-8 h-8 rounded-full"
+                        src="/${arr.location}"
+                        alt="Neil image"
+                      />
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <p
+                        class="text-sm font-medium text-gray-900 truncate dark:text-white"
+                      >
+                        ${arr.name}
+                      </p>
+                    </div>
+                    <div
+                      class="inline-flex items-center text-base text-gray-800 dark:text-white pr-3"
+                    >
+                      ${arr.total_sold}
+                    </div>
+                  </div>
+                </li>`;
+    });
+    $('#list_top_selling').html(_html);
+  }
+  function fetchTopSellingData() {
+    return new Promise((resolve, reject) => {
+      $.ajax({
+        type: 'get',
+        url: '/admin/dashboard/topeselling',
+        success: function (response) {
+          resolve(response);
+        },
+        error: function (ex) {
+          reject(ex);
+        },
+      });
+    });
   }
 });

@@ -1,7 +1,7 @@
 .dashboard_container {
   width: 100%;
-  height: 100vh;
-  padding: 10px;
+  //height: 100vh;
+  padding: 20px;
   box-sizing: border-box;
   .container-1 {
     background-color: rgb(246, 246, 246);
@@ -12,23 +12,68 @@
     gap: 10px;
     grid-template-columns: 1fr 1fr 1fr;
     .cont-graph {
-      background-color: #092635;
-      border-radius: 5px;
-      padding: 2px;
+      background-color: #ccd7dc6b;
+      border: 1px solid rgba(0, 0, 0, 0.317);
+      //background-color: #0926354b;
+      border-radius: 10px;
+      padding: 10px;
+      transition: transform 0.5s ease-out 0.1s;
+      transition: background-color 0.5s ease-out;
+      height: 250px;
+      //overflow: auto;
       &1 {
+        .sub_con {
+          height: calc(100% - 15px);
+          overflow: auto;
+        }
       }
       &2 {
       }
       &3 {
       }
+      .title {
+        height: 20px;
+        margin-bottom: 5px;
+      }
+    }
+    .cont-graph:hover {
+      transform: scale(1.02);
+      //background-color: #092635;
+      //background-color: #051b26;
+      z-index: 1000000;
+    }
+    ul li:hover:after {
+      content: '';
+      background-color: rgba(0, 0, 0, 0.323);
+      width: calc(100% - 10px);
+      height: 1px;
+      //margin-top: 2px;
+      //position: absolute;
+      margin-top: 5px;
+      display: block;
     }
   }
-  .container-2 {
-    background-color: #09263533;
+  .container-2,
+  .container-3 {
+    background-color: #ccd7dc4b;
     border-radius: 10px;
     margin-top: 20px;
     padding: 10px;
     width: 100%;
     height: 300px;
+    transition: height 2s ease-out 0.1s;
+    transition: transform 0.2s ease-out 0.1s;
+    transition: background-color 0.5s ease-out 0.1s;
+  }
+  .container-2:hover,
+  .container-3:hover {
+    transform: scale(1.02);
+    //background-color: #092635;
+    transition: height 0.2s ease-out 0.1s;
+
+    z-index: 1000000;
+  }
+  .oversize-container-2 {
+    height: 500px !important;
   }
 }

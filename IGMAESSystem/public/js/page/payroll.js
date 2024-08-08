@@ -163,10 +163,10 @@ $(function () {
     let sum = 0;
     _doc.each(function () {
       if ($(this).find(':first-child').is(':checked')) {
-        sum += parseInt($(this).find('.salary').text(), 10);
+        sum += parseFloat($(this).find('.salary').text());
       }
     });
-    $('#dp_sum').html(`Total: ${sum}`);
+    $('#dp_sum').html(`Total: ${sum.toFixed(2)}`);
   }
   const DataMapping = {
     employee: [],
@@ -198,7 +198,7 @@ $(function () {
         if (checkbox.is(':checked')) {
           em_payroll = {
             user_id: checkbox.val(),
-            salary: parseInt($(this).find('.salary').text(), 10),
+            salary: parseFloat($(this).find('.salary').text()).toFixed(2),
           };
           payroll.push(em_payroll);
         }

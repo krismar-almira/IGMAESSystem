@@ -23,8 +23,8 @@ class PayrollController extends Controller
     $validator = Validator::make($request->all(),[
       'start_date'=>'required|date',
       'end_date'=>'required|date',
-      'employees.*.user_id' => 'required|integer',
-      'employees.*.salary' => 'required|integer'
+      'employees.*.user_id' => 'required',
+      'employees.*.salary' => 'required'
     ]);
     if($validator->fails()){
       return response()->json($validator->errors(),401);
@@ -103,7 +103,7 @@ class PayrollController extends Controller
     return response()->json($payroll);
   }
   function report($id){
-    $payroll= Payroll::find($id)->with('employee.user', 'createbyuser')->first();
+    $payroll= Payroll::where('id', $id)->with('employee.user', 'createbyuser')->first();
     $individualpayroll= DB::select(
                           'SELECT users.`name`, _i.amount as individual_employee_share, _i.total_employee as number_worker,
                               _i.total_employee * _i.amount as total_employee_share, _i.product_name, _i.date_entry
@@ -133,9 +133,10 @@ class PayrollController extends Controller
     // $dompdf->setPaper('A4', 'portrait');
     // $dompdf->render();
     // return $dompdf->stream('document.pdf');
-     $pdf = PDF::loadView('pdf.document', $data);
+    //return $data;
+    $pdf = PDF::loadView('pdf.document', $data);
        
-    return $pdf->download('itsolutionstuff.pdf');
+    return $pdf->download('payroll.pdf');
   }
   function GetInitial(Request $request){
     $validator = Validator::make($request->all(), [

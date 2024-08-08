@@ -1,7 +1,6 @@
 .dashboard_container {
   width: 100%;
-  height: 100vh;
-  padding: 10px;
+  padding: 20px;
   box-sizing: border-box;
 }
 .dashboard_container .container-1 {
@@ -14,15 +13,52 @@
   grid-template-columns: 1fr 1fr 1fr;
 }
 .dashboard_container .container-1 .cont-graph {
-  background-color: #092635;
-  border-radius: 5px;
-  padding: 2px;
+  background-color: rgba(204, 215, 220, 0.4196078431);
+  border: 1px solid rgba(0, 0, 0, 0.317);
+  border-radius: 10px;
+  padding: 10px;
+  transition: transform 0.5s ease-out 0.1s;
+  transition: background-color 0.5s ease-out;
+  height: 250px;
 }
-.dashboard_container .container-2 {
-  background-color: rgba(9, 38, 53, 0.2);
+.dashboard_container .container-1 .cont-graph1 .sub_con {
+  height: calc(100% - 15px);
+  overflow: auto;
+}
+.dashboard_container .container-1 .cont-graph .title {
+  height: 20px;
+  margin-bottom: 5px;
+}
+.dashboard_container .container-1 .cont-graph:hover {
+  transform: scale(1.02);
+  z-index: 1000000;
+}
+.dashboard_container .container-1 ul li:hover:after {
+  content: "";
+  background-color: rgba(0, 0, 0, 0.323);
+  width: calc(100% - 10px);
+  height: 1px;
+  margin-top: 5px;
+  display: block;
+}
+.dashboard_container .container-2,
+.dashboard_container .container-3 {
+  background-color: rgba(204, 215, 220, 0.2941176471);
   border-radius: 10px;
   margin-top: 20px;
   padding: 10px;
   width: 100%;
   height: 300px;
+  transition: height 2s ease-out 0.1s;
+  transition: transform 0.2s ease-out 0.1s;
+  transition: background-color 0.5s ease-out 0.1s;
+}
+.dashboard_container .container-2:hover,
+.dashboard_container .container-3:hover {
+  transform: scale(1.02);
+  transition: height 0.2s ease-out 0.1s;
+  z-index: 1000000;
+}
+.dashboard_container .oversize-container-2 {
+  height: 500px !important;
 }/*# sourceMappingURL=dashboard.css.map */
