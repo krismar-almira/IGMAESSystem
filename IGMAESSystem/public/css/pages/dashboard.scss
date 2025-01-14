@@ -54,7 +54,8 @@
     }
   }
   .container-2,
-  .container-3 {
+  .container-3,
+  .container-4 {
     background-color: #ccd7dc4b;
     border-radius: 10px;
     margin-top: 20px;
@@ -66,7 +67,8 @@
     transition: background-color 0.5s ease-out 0.1s;
   }
   .container-2:hover,
-  .container-3:hover {
+  .container-3:hover,
+  .container-4:hover {
     transform: scale(1.02);
     //background-color: #092635;
     transition: height 0.2s ease-out 0.1s;

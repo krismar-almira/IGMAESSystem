@@ -12,8 +12,8 @@ use App\Http\Controllers\Controller;
 class ProductController extends Controller
 {
   function All(Request $request){
-    $datas;
-    $recordsFiltered;
+    $datas='';
+    $recordsFiltered='';
     //return $request['search']['regex'];
     //image, name, type, quantity, price
     if($request['search']['value']!=null){
@@ -137,4 +137,5 @@ class ProductController extends Controller
     ->get();
     return response()->json($datas);
   }
+  
 }

@@ -1,5 +1,7 @@
 'use strict';
 
+import { getInventoryId } from "../common/helper.js";
+
 $(function () {
   let crudMode;
   let crudId;
@@ -245,10 +247,10 @@ $(function () {
       url: '/admin/inventory/table',
       type: 'GET',
       dataSrc: function (json) {
-        for (let i = 0; i < json.data.length; i++) {
-          json.data[i][5] = formatDate(json.data[i][5]); // Example transformation
-          json.data[i][6] = formatDate(json.data[i][6]); // Example transformation
-        }
+        // for (let i = 0; i < json.data.length; i++) {
+          // json.data[i][5] = formatDate(json.data[i][5]); 
+          // json.data[i][6] = formatDate(json.data[i][6]);
+        // }
         return json.data;
       },
     },
@@ -258,12 +260,21 @@ $(function () {
     },
     columns: [
       { visible: false, searchable: false },
-      { visible: true, searchable: false },
-      { visible: true, searchable: false },
-      { visible: true, searchable: false },
-      { visible: true, searchable: false },
-      { visible: true, searchable: false },
-      { visible: true, searchable: false },
+      { visible: true, searchable: false, render:function(data,type,full){
+        console.log();
+        return getInventoryId(full[0]);
+      }},
+      { visible: true, searchable: false, data:1 },
+      { visible: true, searchable: false,data:2 },
+      { visible: true, searchable: false,data:3 },
+      { visible: true, searchable: false,data:4 },
+      { visible: true, searchable: false,data:5, render:function(data){
+        return formatDate(data);
+      } },
+      { visible: true, searchable: false,data:6,render:function(data){
+        return formatDate(data);
+      }
+     },
     ],
   });
 });

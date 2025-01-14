@@ -15,7 +15,6 @@
 <nav class="fixed top-0 right-0 left-0 h-12 bg-white flex align-middle items-center shadow-sm">
 
   <div class="hidden sm:flex w-64 items-center px-3">
-    <img src="/image/DENRLOGO.png" class="w-10" alt="">
     <span class="px-2">
       <p class="font-mono text-xs text-gray-500 font-semibold text-nowrap">Department of Environment</p>
       <p class="text-xs font-mono text-gray-500 font-semibold">and Natural Resources</p>
@@ -36,8 +35,8 @@
   <div class="overflow-y-auto py-5 px-3 h-full bg-white border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700">
     <div class="w-full h-40 flex items-center flex-col mb-5">
       <img src="/{{auth()->user()->location}}" class="w-20 border-2 rounded-full shadow-sm" alt="">
-      <p class="text-xl font-mono font-bold mt-2 text-gray-600">{{auth()->user()->name}} {{auth()->user()->lastname}}</p>
-      <p class="-mt-1 text-gray-400 font-mono font-medium text-md">{{auth()->user()->email}}</p>
+      <p class="text-xl font-mono font-bold mt-2 text-gray-600 text-nowrap">{{auth()->user()->name}} {{auth()->user()->lastname}}</p>
+      <p id='user_level' class=" text-white font-mono font-medium text-md bg-gray-700 rounded-lg px-2">{{auth()->user()->userlevel->name}}</p>
       <form action="/admin/user/logout" method="POST">
         @csrf
         <button type="submit" id="user_logout" class="focus:outline-none text-white bg-red-500 hover:bg-red-600 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-1 me-2 my-2 dark:bg-red-200 dark:hover:bg-red-200 dark:focus:ring-red-600">Logout</button>
@@ -99,7 +98,7 @@
               </button>
               <ul id="dropdown-pages" class="hidden py-2 space-y-2">
                 <li>
-                    <a href="#" class="flex items-center p-2 pl-11 w-full text-base font-normal text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">Request</a>
+                    <a href="/admin/purchase/request" class="flex items-center p-2 pl-11 w-full text-base font-normal text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">Request</a>
                 </li>
                 <li>
                     <a href="#" class="flex items-center p-2 pl-11 w-full text-base font-normal text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">List</a>

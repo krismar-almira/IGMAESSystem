@@ -12,8 +12,7 @@ use App\Http\Controllers\Admin\Configuration\PayrollController;
 use App\Http\Controllers\Admin\Configuration\ProductController;
 use App\Http\Controllers\Admin\Configuration\InventoryController;
 use App\Http\Controllers\Admin\Configuration\UserLevelController;
-
-
+use App\Http\Controllers\Admin\PurchaseController;
 
 Route::get('/login',[LoginController::class,'ViewLoginPage']);
 Route::post('/login', [LoginController::class,'Login']);
@@ -26,10 +25,14 @@ Route::middleware(['AdminAccess'])->group(function () {
       Route::get('/', [DashboardController::class, 'index']);
       Route::get('/production', [DashboardController::class, 'production']);
       Route::get('/topeselling', [DashboardController::class, 'GetTopSellingProducts']);
+      Route::get('/purchase', [DashboardController::class, 'getPurchaseData']);
+
     });
     Route::prefix('user')->group(function () {
       Route::get('/registration',[UserRegistrationController::class, 'index']);
       Route::get('/users',[UsersPageController::class, 'index']);
+      Route::get('/getUserSearch',[UserController::class, 'UserSerach']);
+
     });
     Route::prefix('products')->group(function () {
       Route::get('/',[ProductPageController::class, 'index']);
@@ -47,7 +50,7 @@ Route::middleware(['AdminAccess'])->group(function () {
     });
     Route::prefix('product')->group(function(){
       Route::get('/',[ProductController::class, 'All']);
-      Route::get('/getbynamesearch/',[ProductController::class, 'ProductSearch']);
+      Route::get('/getbynamesearch',[ProductController::class, 'ProductSearch']);
       Route::post('/',[ProductController::class, 'AddNew']);
       Route::post('/update',[ProductController::class, 'AddNew']);
       Route::delete('/{id}',[ProductController::class, 'Delete']);
@@ -62,6 +65,19 @@ Route::middleware(['AdminAccess'])->group(function () {
       Route::get('/report/{id}',[PayrollController::class,'report']);
 
     });
+    Route::prefix('/purchase')->group(function(){
+      Route::get('/request', [PurchaseController::class,'pruchaseRequestPage']);
+      Route::post('/request', [PurchaseController::class,'add']);
+      Route::delete('/request/{id}', [PurchaseController::class,'delete']);
+
+      Route::put('/request/status', [PurchaseController::class,'StatusChange']);
+
+      Route::get('/table', [PurchaseController::class,'Table']);
+      Route::get('/preview/{id}', [PurchaseController::class,'PreviewData']);
+
+      Route::get('/inventoryavail/{id}', [PurchaseController::class,'inventoryAvailByProductId']);
+    });
+    
     Route::prefix('user')->group(function () {
       Route::post('/',[UserController::class,'save']);
       Route::get('/',[UserController::class,'All']);

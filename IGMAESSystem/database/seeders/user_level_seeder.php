@@ -22,5 +22,6 @@ class user_level_seeder extends Seeder
         ['id'=>4, 'name'=>'Partner Store'],
       ];
       UserLevel::insert($data);
+      
     }
 }

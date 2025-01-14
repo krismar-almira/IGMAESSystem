@@ -35,7 +35,10 @@
       <canvas id="production_graph"></canvas>
     </div>
     <div class="container-3">
-      <canvas id="salary_graph"></canvas>
+      <canvas id="purchase_graph"></canvas>
+    </div>
+    <div class="container-4">
+      <canvas id="profit_graph"></canvas>
     </div>
   </div>
   @push('scripts')

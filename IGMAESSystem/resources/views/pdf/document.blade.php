@@ -12,16 +12,16 @@
         box-sizing: border-box;
       }
       .text-xs {
-        font-size: 0.75rem;
-        line-height: 1rem;
+        font-size: 0.5rem;
+        line-height: 0.5rem;
       }
       .text-sm {
-        font-size: 0.875rem;
-        line-height: 1.25rem;
+        font-size: 0.4rem;
+        line-height: 0.5rem;
       }
       .text-base {
-        font-size: 1rem;
-        line-height: 1.5rem;
+        font-size: 0.8rem;
+        line-height: 0.5rem;
       }
       .text-left {
         text-align: left;
@@ -90,6 +90,7 @@
       .w-full {
         width: 100%;
       }
+      
     </style>
   </head>
   <body style="padding: 20px; align-items:end;">
@@ -127,15 +128,24 @@
                     <th scope="col" class="px-6 py-3 rounded-s-lg">
                       Product Name
                     </th>
-                    <th scope="col" class="px-6 py-3">Date</th>
-                    <th scope="col" class="px-6 py-3 rounded-e-lg">Amount</th>
+                    <th scope="col" class="px-6 py-3">Date Purchase</th>
+                    <th scope="col" class="px-6 py-3">Quantity Sold</th>
+                    <th scope="col" class="px-6 py-3">Total Quantity</th>
+                    <th scope="col" class="px-6 py-3">Employee Share / Inventory</th>
+                    <th scope="col" class="px-6 py-3 rounded-e-lg">Share (Quantity Sold/Total Quantity)*Employee Share</th>
+
                   </tr>
                   @foreach($actual as $_actual)
                   @if($_actual->name===$_content->user->name)
                   <tr>
-                    <td>{{$_actual->product_name}}</td>
-                    <td>{{$_actual->date_entry}}</td>
-                    <td style="display: flex; justify-content: end;">{{number_format((float)$_actual->individual_employee_share, 2, '.', '')}}</td>
+                    <td>{{$_actual->product}}</td>
+                    <td>{{$_actual->date_pruchase}}</td>
+                    <td>{{$_actual->sold}}</td>
+                    <td>{{$_actual->quantity}}</td>
+                    <td>{{$_actual->employee_share}}</td>
+                    <td>{{$_actual->salary}}</td>
+
+                    {{-- <td style="display: flex; justify-content: end;">{{number_format((float)$_actual->employee_share, 2, '.', '')}}</td> --}}
                   </tr>
                   @endif @endforeach
                 </table>
@@ -154,13 +164,13 @@
         </table>
         <div style="margin-top: 30px;">
           <div style="width: 100%; display: flex; justify-content: space-between;">
-            <span style="display: flex; flex-direction: column;">
+            <span class="text-base" style="display: flex; flex-direction: column;">
               Prepared by:
               <a style="margin-top: 30px;">
                 {{$content->createbyuser->name}}
               </a>
             </span>
-            <span style="display: flex; flex-direction: column; margin-right: 10px; margin-top: 30px;">
+            <span class="text-base" style="display: flex; flex-direction: column; margin-right: 10px; margin-top: 30px;">
               Authorize Signature:
               <a style="margin-top: 30px;">
                 _______________________

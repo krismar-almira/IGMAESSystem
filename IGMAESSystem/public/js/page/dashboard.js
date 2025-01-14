@@ -89,6 +89,7 @@ $(function () {
       labels: labels,
       datasets: loadDatas(name_product, datas),
     };
+    console.log(data);
     const config = {
       type: 'bar',
       data: data,
@@ -204,5 +205,67 @@ $(function () {
         },
       });
     });
+  }
+  async function fethPurchaseData() {
+    return new Promise((resolve, reject)=>{
+      $.ajax({
+        type: 'get',
+        url: '/admin/dashboard/purchase',
+        dataType: 'json',
+        success: function (response) {
+          resolve(response);
+        },
+      });
+    })
+    
+  }
+  // let data = {
+  //     "labels": [
+  //         "Jan.-2025","Feb.-2025","march"
+  //       ],
+  //       "datasets": [
+  //           {
+  //               "label": "CHIP with Egg",
+  //               "data": [
+  //                   200,300,700
+  //               ],
+  //               "backgroundColor": "rgb(255, 99, 132)"
+                
+  //           },
+  //           {
+  //             "label": "CHIP with Egg 2",
+  //             "data": [
+  //                 200,500,700
+  //             ],
+  //             "backgroundColor": "rgb(255, 99, 132)"
+  //         }
+  //       ]
+  //   }
+  
+  initPurchaseTable();
+  async function initPurchaseTable(){
+    const data = await fethPurchaseData();
+    console.log(data);
+    const ctx_production = document.getElementById('purchase_graph');
+    const config = {
+      type: 'line',
+      data: data,
+      options: {
+        responsive: true,
+        resizeDelay: 2,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'top',
+          },
+          title: {
+            display: true,
+            text: 'Purhcase'
+          }
+        }
+      },
+    };
+
+    new Chart(ctx_production, config);
   }
 });

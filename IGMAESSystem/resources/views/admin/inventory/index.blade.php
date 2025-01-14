@@ -167,6 +167,7 @@
           <thead class="">
             <tr>
               <th scope='col' class="px-6 py-3 w-20">ID</th>
+              <th scope='col' class="px-6 py-3 w-20">inventory ID</th>
               <th scope="col" class="px-6 py-3">Product</th>
               <th scope="col" class="px-6 py-3">Quantity</th>
               <th scope="col" class="px-6 py-3">Sold</th>
@@ -181,6 +182,6 @@
     </div>
   </div>
   @push('scripts')
-  <script src="/js/page/inventory.js"></script>
+  <script type="module" src="/js/page/inventory.js"></script>
   @endpush
 </x-adminlayout>

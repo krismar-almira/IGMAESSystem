@@ -13,6 +13,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Dompdf\Dompdf;
+use Psy\CodeCleaner\ReturnTypePass;
 
 class PayrollController extends Controller
 {
@@ -45,9 +46,9 @@ class PayrollController extends Controller
     return response()->json($payroll);
   }
   function table(Request $request){
-    $datas;
-    $recordsFiltered;
-    $recordsTotal;
+    $datas='';
+    $recordsFiltered='';
+    $recordsTotal='';
     $arrays=[];
     if($request['search']['value']!=null){
       // $datas = DB::table('products')
@@ -104,21 +105,32 @@ class PayrollController extends Controller
   }
   function report($id){
     $payroll= Payroll::where('id', $id)->with('employee.user', 'createbyuser')->first();
-    $individualpayroll= DB::select(
-                          'SELECT users.`name`, _i.amount as individual_employee_share, _i.total_employee as number_worker,
-                              _i.total_employee * _i.amount as total_employee_share, _i.product_name, _i.date_entry
+    // $individualpayroll= DB::select(
+    //                       'SELECT users.`name`, _i.amount as individual_employee_share, _i.total_employee as number_worker,
+    //                           _i.total_employee * _i.amount as total_employee_share, _i.product_name, _i.date_entry
                               
-                          FROM (
-                            SELECT 		i.id, i.employer_share/COUNT(gw.inventory_id) as amount, COUNT(gw.inventory_id) as total_employee,
-                                      i.date_entry, products.`name` as product_name
-                            from 			inventories i
-                            LEFT JOIN group_workers gw on i.id = gw.inventory_id
-                            LEFT JOIN products on products.id = i.product_id
-                            GROUP BY 	i.id	
-                            ORDER BY 	i.id) _i	
+    //                       FROM (
+    //                         SELECT 		i.id, i.employer_share/COUNT(gw.inventory_id) as amount, COUNT(gw.inventory_id) as total_employee,
+    //                                   i.date_entry, products.`name` as product_name
+    //                         from 			inventories i
+    //                         LEFT JOIN group_workers gw on i.id = gw.inventory_id
+    //                         LEFT JOIN products on products.id = i.product_id
+    //                         GROUP BY 	i.id	
+    //                         ORDER BY 	i.id) _i	
                             
-                          LEFT JOIN group_workers gw on gw.inventory_id = _i.id
-                          LEFT JOIN users on users.id = gw.user_id where _i.date_entry>=? AND  _i.date_entry<=?'
+    //                       LEFT JOIN group_workers gw on gw.inventory_id = _i.id
+    //                       LEFT JOIN users on users.id = gw.user_id where _i.date_entry>=? AND  _i.date_entry<=?'
+    //                       ,[$payroll->start_date, $payroll->end_date]
+    //                     );
+    $individualpayroll= DB::select(
+                          'SELECT users.id, users.name, products.`name` as product, purchases.date_approve as date_pruchase, purchase_details.count as sold, inventories.quantity, group_workers.employee_share , (purchase_details.count/inventories.quantity) * group_workers.employee_share as salary
+                            FROM group_workers
+                            LEFT JOIN users ON users.id = group_workers.user_id
+                            LEFT JOIN inventories on inventories.id = group_workers.inventory_id
+                            LEFT JOIN purchase_details ON group_workers.inventory_id = purchase_details.inventory_id
+                            LEFT JOIN purchases ON purchases.id = purchase_details.purchase_id
+                            LEFT JOIN products ON inventories.product_id = products.id
+                            WHERE purchases.date_approve >= ? AND purchases.date_approve <=?'
                           ,[$payroll->start_date, $payroll->end_date]
                         );
     $data = [
@@ -134,6 +146,7 @@ class PayrollController extends Controller
     // $dompdf->render();
     // return $dompdf->stream('document.pdf');
     //return $data;
+    //return $data;
     $pdf = PDF::loadView('pdf.document', $data);
        
     return $pdf->download('payroll.pdf');
@@ -146,32 +159,36 @@ class PayrollController extends Controller
     if($validator->fails()){
       return response()->json('invalid date', 402);
     }
-    $users =DB::select(
-                'SELECT users.id, users.`name`, SUM(_i.amount) as salary
-                      FROM (
-                      SELECT 		i.id, i.employer_share/COUNT(gw.inventory_id) as amount, COUNT(gw.inventory_id) as total_employee,
-                                i.date_entry, products.`name` as product_name
-                      from 			inventories i
-                      LEFT JOIN group_workers gw on i.id = gw.inventory_id
-                      LEFT JOIN products on products.id = i.product_id
-                      GROUP BY 	i.id	
-                      ORDER BY 	i.id) _i	
-                LEFT JOIN group_workers gw on gw.inventory_id = _i.id
-                LEFT JOIN users on users.id = gw.user_id
-                where _i.date_entry>=? AND  _i.date_entry<=? and users.name is not null
-                GROUP BY users.id'
-              ,[$request->startDate, $request->endDate]
-            );
-    // $users = DB::table('group_workers')
-    // ->select('users.id as id','users.name',DB::raw('SUM(group_workers.employee_share) as salary'))
-    // ->leftJoin('users','users.id','=','group_workers.user_id')
-    // ->leftJoin('inventories','inventories.id','=','group_workers.inventory_id')
-    // ->leftJoin('user_levels', 'users.user_level_id','=', 'user_levels.id')
-    // ->where('user_levels.name', '=', 'employee')
-    // ->whereDate('inventories.date_entry', '>=', $request['startDate'])
-    // ->whereDate('inventories.date_entry', '<=', $request['endDate'])
-    // ->groupBy('users.id', 'users.name')
-    // ->get();
+    $users = DB::select(
+        'SELECT users.id, users.name, SUM((purchase_details.count/inventories.quantity) * group_workers.employee_share) as salary
+          FROM group_workers
+          LEFT JOIN users ON users.id = group_workers.user_id
+          LEFT JOIN inventories on inventories.id = group_workers.inventory_id
+          LEFT JOIN purchase_details ON group_workers.inventory_id = purchase_details.inventory_id
+          LEFT JOIN purchases ON purchases.id = purchase_details.purchase_id
+          WHERE purchases.date_approve >=? AND purchases.date_approve<=?
+          GROUP BY users.`name`, users.id
+
+        '
+      ,[$request->startDate, $request->endDate]
+    );
+    //previous code
+    // $users = DB::select(
+    //             'SELECT users.id, users.`name`, SUM(_i.amount) as salary
+    //                   FROM (
+    //                   SELECT 		i.id, i.employer_share/COUNT(gw.inventory_id) as amount, COUNT(gw.inventory_id) as total_employee,
+    //                             i.date_entry, products.`name` as product_name
+    //                   from 			inventories i
+    //                   LEFT JOIN group_workers gw on i.id = gw.inventory_id
+    //                   LEFT JOIN products on products.id = i.product_id
+    //                   GROUP BY 	i.id	
+    //                   ORDER BY 	i.id) _i	
+    //             LEFT JOIN group_workers gw on gw.inventory_id = _i.id
+    //             LEFT JOIN users on users.id = gw.user_id
+    //             where _i.date_entry>=? AND  _i.date_entry<=? and users.name is not null
+    //             GROUP BY users.id'
+    //           ,[$request->startDate, $request->endDate]
+    //         );
     return response()->json($users);
   }
 }

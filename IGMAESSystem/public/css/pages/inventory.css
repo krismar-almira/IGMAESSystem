@@ -1,4 +1,4 @@
-#crud_modal {
+#crud_modal, #modal_preview {
   position: fixed;
   left: 0;
   right: 0;

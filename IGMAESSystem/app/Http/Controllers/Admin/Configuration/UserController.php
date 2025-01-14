@@ -42,8 +42,8 @@ class UserController extends Controller
   function All(Request $request){
   //return $request['start'];
   // name address designation userlevel
-  $datas;
-  $recordsFiltered;
+  $datas='';
+  $recordsFiltered='';
   if($request['search']['regex']){
     $datas = DB::table('users')->join('user_levels', 'user_levels.id', '=', 'users.user_level_id')
     ->select('users.name', 'users.address', 'users.designation', 'user_levels.name as userlevel')
@@ -106,5 +106,14 @@ class UserController extends Controller
     ->groupBy('users.id', 'users.name')
     ->get();
     return response()->json($users);
+  }
+  function UserSerach(Request $request){
+    $datas = DB::table('users')
+    ->select('users.id','users.name')
+    ->where('users.name', 'like','%'.$request['term'].'%')
+    ->where('users.user_level_id', 4)
+    ->limit('10')
+    ->get();
+    return response()->json($datas);
   }
 }

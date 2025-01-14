@@ -88,8 +88,8 @@ class InventoryController extends Controller
     return response($inventory);
   }
   function Table(Request $request){
-    $datas;
-    $recordsFiltered;
+    $datas = '';
+    $recordsFiltered='';
     //return $request['search']['regex'];
     //image, name, type, quantity, price
     if($request['search']['value']!=null){
@@ -160,4 +160,5 @@ class InventoryController extends Controller
     $inventory = Inventory::with(['GroupWorker.user', 'Product'])->find($request->id);
     return response()->json($inventory);
   }
+
 }

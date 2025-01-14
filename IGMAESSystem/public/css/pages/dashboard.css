@@ -42,7 +42,8 @@
   display: block;
 }
 .dashboard_container .container-2,
-.dashboard_container .container-3 {
+.dashboard_container .container-3,
+.dashboard_container .container-4 {
   background-color: rgba(204, 215, 220, 0.2941176471);
   border-radius: 10px;
   margin-top: 20px;
@@ -54,7 +55,8 @@
   transition: background-color 0.5s ease-out 0.1s;
 }
 .dashboard_container .container-2:hover,
-.dashboard_container .container-3:hover {
+.dashboard_container .container-3:hover,
+.dashboard_container .container-4:hover {
   transform: scale(1.02);
   transition: height 0.2s ease-out 0.1s;
   z-index: 1000000;
