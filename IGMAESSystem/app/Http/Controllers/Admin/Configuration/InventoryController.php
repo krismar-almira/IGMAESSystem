@@ -8,6 +8,7 @@ use App\Models\GroupWorker;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Models\PurchaseDetail;
 use Illuminate\Support\Facades\Validator;
 
 class InventoryController extends Controller
@@ -119,6 +120,9 @@ class InventoryController extends Controller
       ->orderBy('inventories.date_entry','DESC')
       ->offset($request['start'])->limit($request['length'])
       ->get();
+      foreach ($datas as &$key) {
+        $key->sold = PurchaseDetail::where('inventory_id', $key->id)->sum('count');
+      }
       $recordsFiltered = DB::table('inventories')
                         ->leftJoin('products', 'inventories.product_id', '=', 'products.id')
                         ->join('group_workers', 'group_workers.inventory_id', '=', 'inventories.id')

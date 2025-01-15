@@ -148,4 +148,23 @@ class DashboardController extends Controller
       'datasets'=>$datasets
     ];
   }
+  function getTopClient(){
+    $datas = DB::table('users')
+              ->select('users.name','location', DB::raw('SUM(purchase_details.count * purchase_details.price) as total'))
+              ->leftJoin('purchases', 'purchases.user_id', 'users.id')
+              ->leftJoin('purchase_details', 'purchase_details.purchase_id', 'purchases.id')
+              ->groupBy('users.name','users.location')
+              ->orderByDesc('total')
+              ->get();
+    return $datas;
+  }
+  function getTopProducer(){
+    $datas = DB::table('users')
+              ->select('users.name','location', DB::raw('SUM(inventories.quantity) as qty'))
+              ->leftJoin('group_workers', 'group_workers.user_id', 'users.id')
+              ->leftJoin('inventories', 'inventories.id', 'group_workers.inventory_id')
+              ->groupBy('users.name','users.location')
+              ->get();
+    return $datas;
+  }
 }

@@ -27,6 +27,9 @@ Route::middleware(['AdminAccess'])->group(function () {
       Route::get('/topeselling', [DashboardController::class, 'GetTopSellingProducts']);
       Route::get('/purchase', [DashboardController::class, 'getPurchaseData']);
       Route::get('/profit', [DashboardController::class, 'getCompanyProfit']);
+      Route::get('/client', [DashboardController::class, 'getTopClient']);
+      Route::get('/producer', [DashboardController::class, 'getTopProducer']);
+
     });
     Route::prefix('user')->group(function () {
       Route::get('/registration',[UserRegistrationController::class, 'index']);

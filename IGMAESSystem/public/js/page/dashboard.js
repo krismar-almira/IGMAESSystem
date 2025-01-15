@@ -1,51 +1,13 @@
 'use strict';
 
+import { isInvalidValue } from '../common/helper.js'
+
 $(function () {
-  const ctx1 = document.getElementById('myChart1');
   loadproductiontable();
   loadTopSellingTable();
-  new Chart(ctx1, {
-    type: 'bar',
-    data: {
-      labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-      datasets: [
-        {
-          label: '# of Votes',
-          data: [12, 19, 3, 5, 2, 3],
-          borderWidth: 1,
-        },
-      ],
-    },
-    options: {
-      scales: {
-        y: {
-          beginAtZero: true,
-        },
-      },
-    },
-  });
-  const ctx2 = document.getElementById('myChart2');
-
-  new Chart(ctx2, {
-    type: 'bar',
-    data: {
-      labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-      datasets: [
-        {
-          label: '# of Votes',
-          data: [12, 19, 3, 5, 2, 3],
-          borderWidth: 1,
-        },
-      ],
-    },
-    options: {
-      scales: {
-        y: {
-          beginAtZero: true,
-        },
-      },
-    },
-  });
+  loadTopClientList();
+  loadTopProducer();
+  
   let colors = [
     'rgb(255, 99, 132)',
     'rgb(255, 159, 64)',
@@ -329,5 +291,96 @@ $(function () {
     };
 
     new Chart(ctx_production, config);
+  }
+
+  async function loadTopClientList() {
+    let res = await fetchTopClientData();
+    let _html = '';
+    res.forEach((arr) => {
+      if(isInvalidValue(arr.total))return;
+      _html += `<li class="pb-2 pt-1 pl-2 hover:bg-slate-300 rounded">
+                  <div class="flex items-center space-x-4 rtl:space-x-reverse">
+                    <div class="flex-shrink-0">
+                      <img
+                        class="w-8 h-8 rounded-full"
+                        src="/${arr.location}"
+                        alt="Neil image"
+                      />
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <p
+                        class="text-sm font-medium text-gray-900 truncate dark:text-white"
+                      >
+                        ${arr.name}
+                      </p>
+                    </div>
+                    <div
+                      class="inline-flex items-center text-base text-gray-800 dark:text-white pr-3"
+                    >
+                      ${arr.total+' ₱'}
+                    </div>
+                  </div>
+                </li>`;
+    });
+    $('#top_client_list').html(_html);
+  }
+  function fetchTopClientData() {
+    return new Promise((resolve, reject) => {
+      $.ajax({
+        type: 'get',
+        url: '/admin/dashboard/client',
+        success: function (response) {
+          resolve(response);
+        },
+        error: function (ex) {
+          reject(ex);
+        },
+      });
+    });
+  }
+  async function loadTopProducer() {
+    let res = await fethTopProducer();
+    let _html = '';
+    res.forEach((arr) => {
+      if(isInvalidValue(arr.qty))return;
+      _html += `<li class="pb-2 pt-1 pl-2 hover:bg-slate-300 rounded">
+                  <div class="flex items-center space-x-4 rtl:space-x-reverse">
+                    <div class="flex-shrink-0">
+                      <img
+                        class="w-8 h-8 rounded-full"
+                        src="/${arr.location}"
+                        alt="Neil image"
+                      />
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <p
+                        class="text-sm font-medium text-gray-900 truncate dark:text-white"
+                      >
+                        ${arr.name}
+                      </p>
+                    </div>
+                    <div
+                      class="inline-flex items-center text-base text-gray-800 dark:text-white pr-3"
+                    >
+                      ${arr.qty}
+                    </div>
+                  </div>
+                </li>`;
+    });
+    $('#list_top_producer').html(_html);
+  }
+  function fethTopProducer() {
+    return new Promise((resolve, reject) => {
+      $.ajax({
+        type: 'get',
+        url: '/admin/dashboard/producer',
+        success: function (response) {
+          resolve(response);
+        },
+        error: function (ex) {
+          reject(ex);
+        },
+      });
+    });
   }
 });
