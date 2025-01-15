@@ -35,10 +35,10 @@ class DashboardController extends Controller
   }
   function GetTopSellingProducts(){
     $inventories = DB::table('inventories')
-                  ->select(DB::raw('SUM(purchase_details.count) as total_sold'), 'products.name', 'products.location')
+                  ->select(DB::raw('SUM(purchase_details.count) as total_sold'), 'products.name', 'products.unit_measure as unit', 'products.location')
                   ->join('products', 'products.id', '=', 'inventories.product_id')
                   ->leftJoin('purchase_details','purchase_details.inventory_id','inventories.id')
-                  ->groupBy('products.name', 'products.location')
+                  ->groupBy('products.name', 'products.location','products.unit_measure')
                   ->orderByRaw('total_sold desc')
                   ->get();
     return response()->json($inventories, 200);

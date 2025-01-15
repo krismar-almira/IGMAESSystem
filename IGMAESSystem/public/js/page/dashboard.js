@@ -147,7 +147,7 @@ $(function () {
                     <div
                       class="inline-flex items-center text-base text-gray-800 dark:text-white pr-3"
                     >
-                      ${arr.total_sold}
+                      ${arr.total_sold+' '+arr.unit}
                     </div>
                   </div>
                 </li>`;
