@@ -260,9 +260,71 @@ $(function () {
           },
           title: {
             display: true,
-            text: 'Purhcase'
+            text: 'Purchase',
+            align: 'start',
+            font: { weight: 'bold', size: '20px' },
+            padding: 0,
           }
-        }
+        },
+        scales: {
+            x: {
+                beginAtZero: true, // Start x-axis from zero if necessary
+            },
+            y: {
+                beginAtZero: true, // Start y-axis from zero if necessary
+            },
+        },
+      },
+    };
+
+    new Chart(ctx_production, config);
+  }
+
+  async function fethProfitData() {
+    return new Promise((resolve, reject)=>{
+      $.ajax({
+        type: 'get',
+        url: '/admin/dashboard/profit',
+        dataType: 'json',
+        success: function (response) {
+          resolve(response);
+        },
+      });
+    })
+    
+  }
+  initProfitTable();
+  async function initProfitTable(){
+    const data = await fethProfitData();
+    console.log(data);
+    const ctx_production = document.getElementById('profit_graph');
+    const config = {
+      type: 'line',
+      data: data,
+      options: {
+        responsive: true,
+        resizeDelay: 2,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'top',
+          },
+          title: {
+            display: true,
+            text: 'Company Profit',
+            align: 'start',
+            font: { weight: 'bold', size: '20px' },
+            padding: 0,
+          }
+        },
+        scales: {
+            x: {
+                beginAtZero: true, // Start x-axis from zero if necessary
+            },
+            y: {
+                beginAtZero: true, // Start y-axis from zero if necessary
+            },
+        },
       },
     };
 

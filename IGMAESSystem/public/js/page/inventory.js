@@ -1,6 +1,6 @@
 'use strict';
 
-import { getInventoryId } from "../common/helper.js";
+import { getInventoryId, isInvalidValue } from "../common/helper.js";
 
 $(function () {
   let crudMode;
@@ -187,6 +187,7 @@ $(function () {
             return {
               text: item.name,
               id: item.id,
+              price: item.price,
             };
           }),
         };
@@ -277,4 +278,30 @@ $(function () {
      },
     ],
   });
+
+
+  let productSelected = '' , quantity = 0, expense = 0;
+  $('.product_select').on('select2:select', function (e) {
+    productSelected = e.params.data;
+    updateShare();
+  });
+
+  $("#qty").bind("change paste keyup", function() {
+      quantity = $(this).val(); 
+      updateShare();
+  });
+  $("#expense").bind("change paste keyup", function() {
+    expense = $(this).val(); 
+    updateShare();
+  });
+  function updateShare(){
+    if(isInvalidValue(productSelected)||isInvalidValue(quantity)||isInvalidValue(expense))return;
+    console.log('no error');
+    const _price = parseInt(productSelected.price);
+    const _qty = parseInt($('#qty').val());
+    const _expense = parseInt($('#expense').val());
+    const _share = ((_price*_qty)-_expense)/2;
+    $('#employeeShare').val(_share);
+    $('#companyShare').val(_share);
+  }
 });

@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\Configuration\ProductController;
 use Carbon\Carbon;
 use App\Models\Inventory;
 use App\Models\Product;
+use App\Models\Purchase;
 use Illuminate\Http\Request;
 use App\Models\PurchaseDetail;
 use Illuminate\Support\Facades\DB;
@@ -44,8 +45,8 @@ class DashboardController extends Controller
   }
   function getPurchaseData(){
     $data=[];
-    $dates = PurchaseDetail::query()
-    ->selectRaw('MIN(created_at) as firstDate, MAX(created_at) as lastDate')
+    $dates = Purchase::query()
+    ->selectRaw('MIN(date_approve) as firstDate, MAX(date_approve) as lastDate')
     ->first();
 
     $firstDate = Carbon::parse($dates->firstDate)->startOfMonth();
@@ -78,8 +79,8 @@ class DashboardController extends Controller
                   ->leftJoin('purchase_details', 'purchase_details.inventory_id', '=', 'inventories.id')
                   ->leftJoin('purchases', 'purchases.id', '=', 'purchase_details.purchase_id')
                   ->groupBy('products.id')
-                  ->whereMonth('purchase_details.created_at',$key['m'])
-                  ->whereYear('purchase_details.created_at',$key['year'])
+                  ->whereMonth('purchases.date_approve',$key['m'])
+                  ->whereYear('purchases.date_approve',$key['year'])
                   ->where('products.id',$product['id'])
                   ->first();
         $datas[] = $d ? (int)$d->total_count : 0;
@@ -101,8 +102,50 @@ class DashboardController extends Controller
     //           ->get();
     // return $monthYearArray;
   }
-//   SELECT SUM(inventories.quantity_sold) as total_sold, products.name FROM inventories
-// LEFT JOIN products on products.id = inventories.product_id
-// GROUP BY products.name
-// ORDER BY total_sold desc
+  function getCompanyProfit(){
+    $dates = Purchase::query()
+    ->selectRaw('MIN(date_approve) as firstDate, MAX(date_approve) as lastDate')
+    ->first();
+
+    $firstDate = Carbon::parse($dates->firstDate)->startOfMonth();
+    $lastDate = Carbon::parse($dates->lastDate)->startOfMonth();
+
+    $monthYearArray = [];
+    while ($firstDate->lessThanOrEqualTo($lastDate)) {
+        $monthYearArray[] = [
+            'M'=>$firstDate->format('M'),
+            'm'=>$firstDate->month,
+            'year'=>$firstDate->year,
+        ];
+        $firstDate->addMonth(); // Move to the next month
+    }
+    $products = Product::select('name', 'id')->get();
+    $labels = [];
+    foreach ($monthYearArray as $key) {
+      array_push($labels,$key['M'].'-'.$key['year']);
+    }
+    $datas = [];
+
+    foreach ($monthYearArray as $key) {
+      $data = DB::table('purchase_details')
+              ->leftJoin('inventories', 'inventories.id', '=', 'purchase_details.inventory_id')
+              ->leftJoin('purchases', 'purchases.id', '=', 'purchase_details.purchase_id')
+              ->select('inventories.employer_share', 'purchases.date_approve')
+              ->whereMonth('purchases.date_approve',$key['m'])
+              ->whereYear('purchases.date_approve',$key['year'])
+              ->sum('inventories.employer_share');
+      array_push($datas,(int)$data);
+    }
+    
+
+    $datasets = [[
+      'label'=>'Profit',
+      'data'=>$datas
+    ]];
+    
+    return [
+      'labels'=>$labels,
+      'datasets'=>$datasets
+    ];
+  }
 }
