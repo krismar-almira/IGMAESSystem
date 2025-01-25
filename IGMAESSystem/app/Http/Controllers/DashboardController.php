@@ -2,18 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Admin\Configuration\ProductController;
 use Carbon\Carbon;
-use App\Models\Inventory;
 use App\Models\Product;
 use App\Models\Purchase;
+use App\Models\Inventory;
 use Illuminate\Http\Request;
 use App\Models\PurchaseDetail;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Admin\Configuration\ProductController;
+use App\Models\Payroll;
 
 class DashboardController extends Controller
 {
   function index(){
+    $user_level = Auth::user()->user_level_id;
+    if($user_level===3) return view('admin.dashboard-employee');
     return view('admin.dashboard');
   }
   function production(){
@@ -166,5 +170,93 @@ class DashboardController extends Controller
               ->groupBy('users.name','users.location')
               ->get();
     return $datas;
+  }
+  function employeeInvdividualSalary(){
+    $userId = Auth::user()->id;
+    $dates = Payroll::query()
+    ->selectRaw('MIN(start_date) as firstDate, MAX(end_date) as lastDate')
+    ->first();
+
+    $firstDate = Carbon::parse($dates->firstDate)->startOfMonth();
+    $lastDate = Carbon::parse($dates->lastDate)->startOfMonth();
+
+    $monthYearArray = [];
+    while ($firstDate->lessThanOrEqualTo($lastDate)) {
+        $monthYearArray[] = [
+            'M'=>$firstDate->format('M'),
+            'm'=>$firstDate->month,
+            'year'=>$firstDate->year,
+        ];
+        $firstDate->addMonth(); // Move to the next month
+    }
+    $products = Product::select('name', 'id')->get();
+    $labels = [];
+    foreach ($monthYearArray as $key) {
+      array_push($labels,$key['M'].'-'.$key['year']);
+    }
+    $datas = [];
+
+    foreach ($monthYearArray as $key) {
+      $data = DB::table('payrolls')
+      ->leftJoin('payroll_employees', 'payroll_employees.payroll_id', '=', 'payrolls.id')
+      ->leftJoin('users', 'users.id', '=', 'payroll_employees.user_id')
+      ->select('users.name', DB::raw('SUM(payroll_employees.amount) as total_amount'))
+      ->groupBy('users.name')
+      ->whereMonth('payrolls.start_date',$key['m'])
+      ->whereYear('payrolls.start_date',$key['year'])
+      ->where('users.id', $userId)
+      ->sum('payroll_employees.amount');
+      // $data = DB::table('purchase_details')
+      //         ->leftJoin('inventories', 'inventories.id', '=', 'purchase_details.inventory_id')
+      //         ->leftJoin('purchases', 'purchases.id', '=', 'purchase_details.purchase_id')
+      //         ->select('inventories.employer_share', 'purchases.date_approve')
+      //         ->whereMonth('purchases.date_approve',$key['m'])
+      //         ->whereYear('purchases.date_approve',$key['year'])
+      //         ->sum('inventories.employer_share');
+      array_push($datas,(int)$data);
+    }
+    
+
+    $datasets = [[
+      'label'=>'salary',
+      'data'=>$datas
+    ]];
+    
+    return [
+      'labels'=>$labels,
+      'datasets'=>$datasets
+    ];
+    
+    // $userId = Auth::user()->id;
+    // $data = DB::table('payrolls')
+    // ->leftJoin('payroll_employees', 'payroll_employees.payroll_id', '=', 'payrolls.id')
+    // ->leftJoin('users', 'users.id', '=', 'payroll_employees.user_id')
+    // ->select('users.name', DB::raw('SUM(payroll_employees.amount) as total_amount'))
+    // ->groupBy('users.name')
+    // ->where('users.id', $userId)
+    // ->get();
+    // return $data;
+  }
+
+  function productionEmployee(){
+    $userId = Auth::user()->id;
+    $inventories = DB::table('inventories')
+                  ->select('quantity as qty','date_entry', 'products.name')
+                  ->join('products', 'products.id', '=', 'inventories.product_id')
+                  ->leftJoin('group_workers','group_workers.inventory_id','inventories.id')
+                  ->where('group_workers.user_id',$userId)
+                  ->orderby('date_entry')
+                  ->get();
+    $datas = [];
+    foreach ($inventories as $inventory) {
+      array_push($datas,array(
+          'name'=>$inventory->name,
+          'quantity'=>$inventory->qty,
+          'month'=>date("m", strtotime($inventory->date_entry)),
+          'year'=>date("Y", strtotime($inventory->date_entry))
+        )
+      );
+    }
+    return response()->json($datas);
   }
 }

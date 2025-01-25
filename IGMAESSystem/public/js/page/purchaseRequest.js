@@ -216,6 +216,10 @@ $(function () {
           searchable: false,
           render: function(data, type, row) {
               // Render a dropdown with the current status selected
+              if(userlevel == 'Partner Store')
+              {
+                return data;
+              }
               return `
                   <select class="form-select status-dropdown" data-id="${row.id}">
                       <option disabled value="1" ${data === 'For Approval' ? 'selected' : ''}>For Approval</option>

@@ -19,6 +19,9 @@ class PurchaseController extends Controller
     function pruchaseRequestPage(){
         return view('admin.purchase.purchaseRequest');
     }
+    function pruchaseRequestStore(){
+        return view('admin.purchaseRequestOnly');
+    }
     function inventoryAvailByProductId($id){
         $inventories = DB::table('inventories')
                     ->select('inventories.id', 'inventories.expiration',
@@ -93,8 +96,12 @@ class PurchaseController extends Controller
                     ->leftJoin('products', 'products.id','inventories.product_id')
                     ->leftJoin('users', 'purchases.user_id','users.id')
                     ->leftJoin('purchase_statuses', 'purchases.purchase_status_id','purchase_statuses.id')
-                    ->groupBy('purchases.id','products.name','users.name')
-                    ->get();
+                    ->groupBy('purchases.id','products.name','users.name');
+                    
+        if(Auth::user()->user_level_id==4){
+            $data =$data->where('purchases.user_id',Auth::user()->id);
+        }
+        $data = $data->get();
         return ['data'=>$data];
     }
     function StatusChange(Request $request){
