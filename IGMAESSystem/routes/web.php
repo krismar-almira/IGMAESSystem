@@ -74,7 +74,7 @@ Route::middleware(['AdminAccess'])->group(function () {
       Route::get('/request', [PurchaseController::class,'pruchaseRequestPage']);
       Route::get('/requeststore', [PurchaseController::class,'pruchaseRequestStore']);
       Route::post('/request', [PurchaseController::class,'add']);
-      Route::delete('/request/{id}', [PurchaseController::class,'delete'])->middleware(AdminOnly::class);
+      Route::delete('/request/{id}', [PurchaseController::class,'delete']);
 
       Route::put('/request/status', [PurchaseController::class,'StatusChange'])->middleware(AdminOnly::class);
 

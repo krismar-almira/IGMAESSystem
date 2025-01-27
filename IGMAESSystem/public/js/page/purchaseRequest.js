@@ -11,7 +11,10 @@ $(function () {
   init();
   function init(){
     if(userlevel=='Admin'||userlevel=='SA') return;
+    
     $('#partner_store_select_cont').addClass('hidden');
+    $('#inventory-container').addClass('hidden');
+    
   }
   const openModal = () => {
     $('#crud_modal').removeClass('hidden1');

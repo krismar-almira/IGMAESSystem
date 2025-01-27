@@ -195,7 +195,7 @@
                       required=""
                     />
                   </div>
-                  <div class="col-span-2">
+                  <div class="col-span-2" id="inventory-container">
                     <div>
                       <div class="flex items-center space-x-4 rtl:space-x-reverse">
                           <div class="flex-shrink-0">
