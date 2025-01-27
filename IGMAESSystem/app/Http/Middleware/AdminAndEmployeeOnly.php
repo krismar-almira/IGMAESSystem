@@ -17,7 +17,7 @@ class AdminAndEmployeeOnly
     public function handle(Request $request, Closure $next): Response
     {
         $userLevel = Auth::user()->user_level_id;
-        if ($userLevel != 2 || $userLevel != 3 ) {
+        if (!($userLevel == 2 || $userLevel == 3 )) {
             return redirect('/admin/purchase/request');
         }
           return $next($request);
