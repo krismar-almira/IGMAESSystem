@@ -22,7 +22,7 @@ class UserController extends Controller
       'password' => 'required|string|max:255',
       'designation' => 'required|string|max:255',
       'user_level_id' => 'required|integer|max:255',
-      'username' => 'required|string|max:255',
+      'username' => 'required|string|max:255|unique:users',
 
       'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
     ]);

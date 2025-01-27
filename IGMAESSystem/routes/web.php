@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\Configuration\ProductController;
 use App\Http\Controllers\Admin\Configuration\InventoryController;
 use App\Http\Controllers\Admin\Configuration\UserLevelController;
 use App\Http\Controllers\Admin\PurchaseController;
+use App\Http\Middleware\AdminAndEmployeeOnly;
 use App\Http\Middleware\AdminOnly;
 
 Route::get('/login',[LoginController::class,'ViewLoginPage']);
@@ -23,7 +24,7 @@ Route::middleware(['AdminAccess'])->group(function () {
   Route::get('/', function(){return redirect('/admin/dashboard');});
   Route::prefix('/admin')->group(function () {
     Route::prefix('/dashboard')->group(function () {
-      Route::get('/', [DashboardController::class, 'index']);
+      Route::get('/', [DashboardController::class, 'index'])->middleware(AdminAndEmployeeOnly::class);
       Route::get('/production', [DashboardController::class, 'production']);
       Route::get('/topeselling', [DashboardController::class, 'GetTopSellingProducts']);
       Route::get('/purchase', [DashboardController::class, 'getPurchaseData']);

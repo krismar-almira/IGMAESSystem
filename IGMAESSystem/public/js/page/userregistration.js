@@ -34,8 +34,10 @@ $(function () {
       await Save(formdata);
       Toast('success', 'Successfully save!');
       $('#registration_form')[0].reset();
-    } catch {
-      Toast('error2', 'Email is already inused!');
+    } catch(ex) {
+      console.log(ex);
+      if(ex.responseJSON.message)
+      Toast('error2', ex.responseJSON.message);
     }
     CloseLoading();
   }
