@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Models\PurchaseDetail;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
 
 class InventoryController extends Controller
@@ -93,43 +94,54 @@ class InventoryController extends Controller
     $recordsFiltered='';
     //return $request['search']['regex'];
     //image, name, type, quantity, price
-    if($request['search']['value']!=null){
-      $recordsFiltered = DB::table('inventories')
-                        ->leftJoin('products', 'inventories.product_id', '=', 'products.id')
-                        ->join('group_workers', 'group_workers.inventory_id', '=', 'inventories.id')
-                        ->where('products.name', 'like', '%' . $request['search']['value'] . '%')
-                        ->distinct('inventories.id')
-                        ->count('inventories.id');
+    // if($request['search']['value']!=null){
+    //   $recordsFiltered = DB::table('inventories')
+    //                     ->leftJoin('products', 'inventories.product_id', '=', 'products.id')
+    //                     ->join('group_workers', 'group_workers.inventory_id', '=', 'inventories.id')
+    //                     ->where('products.name', 'like', '%' . $request['search']['value'] . '%')
+    //                     ->distinct('inventories.id')
+    //                     ->count('inventories.id');
+    //   $datas = DB::table('inventories')
+    //           ->select('inventories.id as id','inventories.date_entry','products.name as productname', 'inventories.quantity as quantity', 'inventories.quantity_sold as sold','inventories.expiration as expire','products.unit_measure',DB::raw("COUNT(*) as 'workers'"))
+    //           ->leftjoin('products','inventories.product_id','=','products.id')
+    //           ->join('group_workers', 'group_workers.inventory_id','=', 'inventories.id')
+    //           ->groupby('id')
+    //           ->where('products.name', 'like', '%'.$request['search']['value'].'%')
+    //           ->orderBy('inventories.date_entry','DESC')
+    //           ->offset($request['start'])->limit($request['length'])
+    //           ->get();
+ 
       $datas = DB::table('inventories')
-              ->select('inventories.id as id','inventories.date_entry','products.name as productname', 'inventories.quantity as quantity', 'inventories.quantity_sold as sold','inventories.expiration as expire','products.unit_measure',DB::raw("COUNT(*) as 'workers'"))
-              ->leftjoin('products','inventories.product_id','=','products.id')
-              ->join('group_workers', 'group_workers.inventory_id','=', 'inventories.id')
-              ->groupby('id')
-              ->where('products.name', 'like', '%'.$request['search']['value'].'%')
-              ->orderBy('inventories.date_entry','DESC')
-              ->offset($request['start'])->limit($request['length'])
-              ->get();
-      //return $recordsFiltered;
-    }
-    else{
-      $datas = DB::table('inventories')
-      ->select('inventories.id as id','inventories.date_entry','products.name as productname', 'inventories.quantity as quantity', 'inventories.quantity_sold as sold','inventories.expiration as expire','products.unit_measure',DB::raw("COUNT(inventories.id) as 'workers'"))
+      ->select('inventories.id as id',
+                'inventories.date_entry',
+                'products.name as productname', 
+                'inventories.quantity as quantity', 
+                'inventories.quantity_sold as sold',
+                'inventories.expiration as expire',
+                'products.unit_measure',
+                DB::raw("COUNT(inventories.id) as 'workers'"),
+                
+                )
       ->leftjoin('products','inventories.product_id','=','products.id')
       ->join('group_workers', 'group_workers.inventory_id','=', 'inventories.id')
       ->groupby('inventories.id')
       ->orderBy('inventories.date_entry','DESC')
       ->offset($request['start'])->limit($request['length'])
+      ->where('products.name', 'like', '%'.$request['search']['value'].'%')
       ->get();
       foreach ($datas as &$key) {
-        $key->sold = PurchaseDetail::where('inventory_id', $key->id)->sum('count');
-      }
+        $sold = PurchaseDetail::where('inventory_id', $key->id)->sum('count');
+        $key->sold=$sold;
+        if(Carbon::parse($key->expire)->lessThanOrEqualTo(Carbon::now())){
+          $key->qty_expired =  $key->quantity - $sold;
+        }else{
+          $key->qty_expired = 0;
+        }
       $recordsFiltered = DB::table('inventories')
                         ->leftJoin('products', 'inventories.product_id', '=', 'products.id')
                         ->join('group_workers', 'group_workers.inventory_id', '=', 'inventories.id')
                         ->distinct('inventories.id')
                         ->count('inventories.id');
-      // $recordsFiltered = DB::table('inventories')
-      // ->count();
     }
     //return dd($datas);
 
@@ -149,7 +161,8 @@ class InventoryController extends Controller
         $data->sold.' ('.$data->unit_measure.')',
         $data->workers,
         $data->date_entry,
-        $data->expire
+        $data->expire,
+        $data->qty_expired
       ];
       array_push($arrays,$array);
     }

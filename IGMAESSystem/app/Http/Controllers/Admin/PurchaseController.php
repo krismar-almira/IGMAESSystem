@@ -30,6 +30,7 @@ class PurchaseController extends Controller
                     ->leftJoin('products', 'inventories.product_id', 'products.id')
                     ->where('inventories.product_id', $id)
                     //->where('inventories.quantity_sold', '<=','inventories.quantity')
+                    ->whereRaw("DATE(inventories.expiration) > DATE(NOW())")
                     ->orderBy('inventories.expiration')
                     ->get();
         foreach ($inventories as &$inventory) {
@@ -48,7 +49,6 @@ class PurchaseController extends Controller
                                     ->leftJoin('purchases', 'purchases.id','purchase_details.purchase_id')
                                     ->where('purchase_details.inventory_id',$inventory->id)
                                     ->sum('purchase_details.count');
-                                    
         }
         $filteredInventories = $inventories->filter(function ($inventory) {
             return $inventory->available > 0 || $inventory->pending > 0;
