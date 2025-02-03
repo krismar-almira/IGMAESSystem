@@ -37,7 +37,7 @@ class PurchaseController extends Controller
             $inventory->pending = DB::table('purchase_details')
                                     ->leftJoin('purchases', 'purchases.id','purchase_details.purchase_id')
                                     ->where('purchase_details.inventory_id',$inventory->id)
-                                    ->whereIn('purchases.purchase_status_id',[1,2])
+                                    ->whereIn('purchases.purchase_status_id',[1])
                                     ->sum('purchase_details.count');
             
             $inventory->sold = (int)DB::table('purchase_details')

@@ -15,7 +15,7 @@ $(function () {
     
     $('#partner_store_select_cont').addClass('hidden');
     $('#inventory-container').addClass('hidden');
-    
+    $('#btn_add_new').addClass('hidden');
   }
   const openModal = () => {
     $('#crud_modal').removeClass('hidden1');
@@ -235,9 +235,8 @@ $(function () {
               }
               return `
                   <select class="form-select status-dropdown" data-id="${row.id}">
-                      <option disabled value="1" ${data === 'For Approval' ? 'selected' : ''}>For Approval</option>
-                      <option value="2" ${data === 'For Delivery' ? 'selected' : ''}>For Delivery</option>
-                      <option value="3" ${data === 'Delivered' ? 'selected' : ''}>Delivered</option>
+                      <option disabled value="1" ${data === 'Pending' ? 'selected' : ''}>Pending</option>
+                      <option value="2" ${data === 'Complete' ? 'selected' : ''}>Complete</option>
                   </select>
               `;
           }
@@ -251,8 +250,8 @@ $(function () {
           render: function(data, type, row) {
               return `
                   <button class="btn-default m-0 btn-preview" data-id=${row.id} style='margin:0'>View</button>
-                  <button ${row.status=='For Approval'?'':'disabled'} class="btn  ${row.status=='For Approval'?'btn-danger':'hidden'}  btn-sm btn-delete" style='margin:0' data-id=${row.id}>Delete</button>
-                  <button ${row.date_approve==null?'':'disabled'} class="btn  ${row.date_approve==null?'btn-danger':'hidden'}  btn-sm btn-approve" style='margin:0' data-id=${row.id}>Approve Payout</button>
+                  <button ${row.status=='Pending'?'':'disabled'} class="btn ${userlevel=='Partner Store'?'hidden':''} ${row.status=='Pending'?'btn-danger':'hidden'}  btn-sm btn-delete" style='margin:0' data-id=${row.id}>Delete</button>
+                  <button ${row.date_approve==null?'':'disabled'} class="btn  ${userlevel=='Partner Store'?'hidden':''} ${row.date_approve==null?'btn-danger':'hidden'}  btn-sm btn-approve" style='margin:0' data-id=${row.id}>Approve Payout</button>
               `;
           }
       }

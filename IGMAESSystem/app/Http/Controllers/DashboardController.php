@@ -18,7 +18,10 @@ class DashboardController extends Controller
   function index(){
     $user_level = Auth::user()->user_level_id;
     if($user_level===3) return view('admin.dashboard-employee');
-    return view('admin.dashboard');
+    $pending = Purchase::where('purchase_status_id',1)->count();
+    $complete = Purchase::where('purchase_status_id',2)->count();
+
+    return view('admin.dashboard',['pending'=>$pending,'complete'=>$complete]);
   }
   function production(){
     $inventories = Inventory::select('quantity as qty','date_entry', 'products.name')

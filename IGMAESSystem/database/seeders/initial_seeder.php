@@ -36,9 +36,8 @@ class initial_seeder extends Seeder
             'user_level_id' => 2,
         ]);
         $data =[
-            ['id'=>1, 'name'=>'For Approval'],
-            ['id'=>2, 'name'=>'For Delivery'],
-            ['id'=>3, 'name'=>'Delivered'],
+            ['id'=>1, 'name'=>'Pending'],
+            ['id'=>2, 'name'=>'Complete'],
           ];
         PurchaseStatus::insert($data);
           

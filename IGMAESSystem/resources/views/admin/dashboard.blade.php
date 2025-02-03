@@ -4,6 +4,22 @@
   @endpush
 
   <div class="dashboard_container">
+    <div class="flex gap-5 mb-3">
+      <div class="bg-orange-200 flex-1 rounded-lg px-5 py-3 text-xl shadow-md">
+        <p class="font-mono">Pending</p>
+        <p class="text-right font-mono font-semibold text-2xl">{{$pending}}</p>
+      </div>
+      <div class="bg-blue-200 flex-1 rounded-lg px-5 py-3 text-xl shadow-md">
+        <p class="font-mono">Complete</p>
+        <p class="text-right font-mono font-semibold text-2xl">{{$complete}}</p>
+
+      </div>
+      <div class="bg-gray-300 flex-1 rounded-lg px-5 py-3 text-xl shadow-md">
+        <p class="font-mono">Total</p>
+        <p class="text-right font-mono font-semibold text-2xl">{{$complete+$pending}}</p>
+
+      </div>
+    </div>
     <div class="container-1">
       <div class="cont-graph1 cont-graph">
         <h6 class="title text-gray-700 font-mono font-bold text-right">
