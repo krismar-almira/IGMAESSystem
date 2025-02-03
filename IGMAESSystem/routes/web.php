@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\Configuration\ProductController;
 use App\Http\Controllers\Admin\Configuration\InventoryController;
 use App\Http\Controllers\Admin\Configuration\UserLevelController;
 use App\Http\Controllers\Admin\PurchaseController;
+use App\Http\Controllers\ReturnController;
 use App\Http\Middleware\AdminAndEmployeeOnly;
 use App\Http\Middleware\AdminOnly;
 
@@ -33,6 +34,8 @@ Route::middleware(['AdminAccess'])->group(function () {
       Route::get('/producer', [DashboardController::class, 'getTopProducer']);
       Route::get('/individualemployee', [DashboardController::class, 'employeeInvdividualSalary']);
       Route::get('/productionemployee', [DashboardController::class, 'productionEmployee']);
+      Route::get('/getreturndata/{id}', [DashboardController::class, 'getReturnData']);
+
     });
     Route::prefix('user')->group(function () {
       Route::get('/registration',[UserRegistrationController::class, 'index'])->middleware(AdminOnly::class);
@@ -74,6 +77,7 @@ Route::middleware(['AdminAccess'])->group(function () {
       Route::get('/request', [PurchaseController::class,'pruchaseRequestPage']);
       Route::get('/requeststore', [PurchaseController::class,'pruchaseRequestStore']);
       Route::post('/request', [PurchaseController::class,'add']);
+      Route::post('/approvepayout/{id}', [PurchaseController::class,'approvePayout']);
       Route::delete('/request/{id}', [PurchaseController::class,'delete']);
 
       Route::put('/request/status', [PurchaseController::class,'StatusChange'])->middleware(AdminOnly::class);
@@ -90,6 +94,13 @@ Route::middleware(['AdminAccess'])->group(function () {
       Route::get('/search',[UserController::class,'UserSearch'])->middleware(AdminOnly::class);
       Route::post('/logout',[UserController::class,'logout']);
       Route::get('/getallemployee',[UserController::class, 'GetAllEmployee']);
+    });
+    Route::prefix('return')->group(function () {
+      Route::get('/',[ReturnController::class,'view'])->middleware(AdminOnly::class);
+      Route::get('/table', [ReturnController::class,'Table']);
+      Route::post('/savereturn', [ReturnController::class,'ReturnItem']);
+
+      Route::get('/inventoryavail/{id}', [PurchaseController::class,'inventoryAvailByProductId']);
     });
     //Route::get('/', [UserLevelController::class, 'GetAll']);
     Route::get('/userlevel', [UserLevelController::class, 'GetAll']);

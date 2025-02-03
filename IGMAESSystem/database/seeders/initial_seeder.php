@@ -33,7 +33,7 @@ class initial_seeder extends Seeder
             'filename' => 'na',
             'designation' => 'super admin',
             'username'=>'sa',
-            'user_level_id' => 1,
+            'user_level_id' => 2,
         ]);
         $data =[
             ['id'=>1, 'name'=>'For Approval'],

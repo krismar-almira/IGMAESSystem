@@ -13,8 +13,6 @@ $(function () {
   function init(){
     if(userlevel=='Admin'||userlevel=='SA') return;
     
-    $('#partner_store_select_cont').addClass('hidden');
-    $('#inventory-container').addClass('hidden');
     
   }
   const openModal = () => {
@@ -148,58 +146,8 @@ $(function () {
     console.log(totalAvail);
     $('.total-available').html(totalAvail);
   }
-  $('#btn_submit_modal').on('click', ()=>{
-    
-    let qty_total = $("#qty").val();
-    const _data = {quantity:$('#qty').val(), product_id:$(".product_select").val(),store_id:$("#partner_store_select").val(), inventories:[]};
-    console.table(currentData);
-    $('.product-avail').each(function(){
-      const _inventory_id = $(this).data('id');
-      const _inventory_count = parseInt($(this).html());
-      const to_add = qty_total - _inventory_count;
-      console.log(qty_total + '-' +_inventory_count +'=' +to_add);
-
-      if(to_add<=0){
-        _data.inventories.push({id:_inventory_id,count:parseInt(qty_total)});
-        return false;
-      }else{
-        _data.inventories.push({id:_inventory_id,count:_inventory_count});
-        qty_total -=_inventory_count;
-      }
-      // 991-990=1
-      // 991-10=981
-    });
-    console.log(_data);
-    if(!validate(_data))return;
-    StartLoading();
-
-    Save(_data);
-    closeModal();
-    table.ajax.reload();
-    CloseLoading();
-  });
-  function Save(_data) {
-    let url;
-    url =
-      crudMode == 'add' ? '/admin/purchase/request' : '/admin/inventory/update';
-    return new Promise(function (resolve, reject) {
-      $.ajax({
-        headers: {
-          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-        },
-        type: 'post',
-        url: url,
-        data: _data,
-        dataType: 'json',
-        success: function (response) {
-          resolve(response);
-        },
-        error: function (response) {
-          reject(response);
-        },
-      });
-    });
-  }
+  
+  
   // var dropdownParentEl = $('#addModal > .modal-dialog > .modal-content');
   // selectBoxElem.select2({
   //   dropdownParent: dropdownParentEl,
@@ -211,38 +159,23 @@ $(function () {
     scrollCollapse: true,
     scrollY: 'calc(100vh - 350px)',
     ajax: {
-      url: '/admin/purchase/table',
+      url: '/admin/return/table',
       type: 'GET',
 
     },
     initComplete: function (settings, json) {
     },
     columns: [
-      {data:'id', visible: false, searchable: false },
+      {data:'id', visible: false, searchable: false},
+      
+      {data:'ordered_date', visible: true, type:'string', searchable: false,render:(row)=>{
+        return new Date(row).toLocaleDateString('en-CA'); 
+      } },
+
       {data:'product', visible: true, searchable: false },
       {data:'quantity', visible: true, searchable: false },
-
+      {data:'returnqty', visible: true, searchable: false },
       {data:'user', visible: true, searchable: false },
-      { 
-          data: 'status', 
-          visible: true, 
-          searchable: false,
-          render: function(data, type, row) {
-              // Render a dropdown with the current status selected
-              if(userlevel == 'Partner Store')
-              {
-                return data;
-              }
-              return `
-                  <select class="form-select status-dropdown" data-id="${row.id}">
-                      <option disabled value="1" ${data === 'For Approval' ? 'selected' : ''}>For Approval</option>
-                      <option value="2" ${data === 'For Delivery' ? 'selected' : ''}>For Delivery</option>
-                      <option value="3" ${data === 'Delivered' ? 'selected' : ''}>Delivered</option>
-                  </select>
-              `;
-          }
-      },
-      {data:'date_approve', visible: true, searchable: false },
       
       { 
           data: null, // Use `null` for rendering custom content
@@ -250,15 +183,18 @@ $(function () {
           searchable: false, // Disable searching for this column
           render: function(data, type, row) {
               return `
-                  <button class="btn-default m-0 btn-preview" data-id=${row.id} style='margin:0'>View</button>
-                  <button ${row.status=='For Approval'?'':'disabled'} class="btn  ${row.status=='For Approval'?'btn-danger':'hidden'}  btn-sm btn-delete" style='margin:0' data-id=${row.id}>Delete</button>
-                  <button ${row.date_approve==null?'':'disabled'} class="btn  ${row.date_approve==null?'btn-danger':'hidden'}  btn-sm btn-approve" style='margin:0' data-id=${row.id}>Approve Payout</button>
+                  <button class="btn-danger m-0 btn-preview" data-date_approve=${row.date_approve} data-id=${row.id} style='margin:0'>Return</button>
               `;
           }
       }
     ],
   });
+  
   $(document).on('click','.btn-preview', async function(){
+    if($(this).data().date_approve!=null){
+      Toast('error', 'The sale has already been marked for payroll and cannot be returned.')
+      return;
+    }
     openModalPreview();
     StartLoading();
     let res = await pullPreviewData($(this).data('id'));
@@ -270,33 +206,40 @@ $(function () {
   function loadDataToPreview(data){
     $('#product_name').val(data.product);
     $('#prv_qty').val(parseInt(data.quantity));
+    $("#inventoryItems tr:not(:first)").remove();
+
     if(isInvalidValue(data.items))return;
     let htmlToAdd='';
     data.items.forEach(x=>{
-      htmlToAdd+=`<li class="pb-3 sm:pb-4">
-                    <div class="flex items-center space-x-4 rtl:space-x-reverse">
-                        <div class="flex-1 min-w-0">
-                          <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
-                              ${data.product}
-                          </p>
-                          <p class="text-sm font-medium text-gray-900 truncate dark:text-white">
-                              ${getInventoryId(x.inventory_id)}
-                          </p>
-                        </div>
-                        <div class="inline-flex text-gray-500 items-center text-base font-semibold dark:text-white">
-                          ${x.count}
-                        </div>
-                        <div class="inline-flex text-gray-500 items-center text-base font-semibold dark:text-white">
-                          ${x.price}
-                        </div>
-                        <div class="inline-flex total_price text-gray-500 items-center text-base font-semibold dark:text-white">
-                          ${x.price*x.count}
-                        </div>
-                        
-                    </div>
-                  </li>`
+      htmlToAdd+=`<tr>
+                      <td >
+                        ${getInventoryId(x.inventory_id)}
+                      </td>
+                      <td >
+                        ${x.count}
+                      </td>
+                      <td>
+                        ${x.count}
+                      </td>
+                      <td>
+                        ${x.price*x.count}
+                      </td>
+                      <td>
+                        <input type="number" data-id='${x.id}' data-price='${x.count}' data-count='${x.count}'  class="block input_return w-full p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                      </td>
+                      <td>
+                        <input type="checkbox" value="" data-id='${x.id}' class="w-4 h-4 chk-dispose text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                      </td>
+                </tr>`
     });
-    $('#inventoryItems').html(htmlToAdd);
+    $(document).on('keyup', '.input_return', function(){
+      if($(this).data().count<$(this).val()){
+        console.log('invalid');
+        Toast('error', 'Invalid Value')
+        $(this).val(0);
+      }
+    })
+    $('#inventoryItems').append(htmlToAdd);
     let TotalAmount=0;
     try {
       data.items.forEach(val=>{
@@ -307,7 +250,48 @@ $(function () {
     } catch (error) {
       
     }
-    
+  }
+  $('#btn_submit_return').on('click',async ()=>{
+    let values = [];
+    $('.input_return').each(function(){
+      const _id = $(this).data().id;
+      values.push(
+        {
+          id: _id,
+          value: $(this).val(),
+          dispose:$('input[type="checkbox"]').filter(`[data-id="${_id}"]`).prop('checked')
+        }
+      );
+    });
+    StartLoading();
+    $(this).attr('disabled', true);
+    await Save(values);
+    CloseLoading();
+    closeModalPreview();
+    table.ajax.reload();
+    console.log(values);
+  });
+  
+  function Save(_data) {
+
+    return new Promise(function (resolve, reject) {
+      $.ajax({
+        headers: {
+          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+        },
+        type: 'post',
+        url: '/admin/return/savereturn',
+        data: JSON.stringify(_data),
+        contentType : "application/json", 
+        dataType: 'json',
+        success: function (response) {
+          resolve(response);
+        },
+        error: function (response) {
+          reject(response);
+        },
+      });
+    });
   }
   function pullPreviewData(id){
     return new Promise((resolve, reject)=>{
@@ -338,70 +322,8 @@ $(function () {
     })
     
   }
-  $(document).on('click','.btn-delete', function(){
-    const id = $(this).data('id')
-    $.ajax({
-        url: `/admin/purchase/request/${id}`, 
-        type: 'delete',
-        headers: {
-          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-        },
-        // data:JSON.stringify( { 
-        //     id:id,
-        //     status: newValue 
-        // }),
-        contentType: 'application/json', 
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') // Laravel CSRF token
-        },
-        success: function(response) {
-            Toast('success', 'Deleted successfully');
-        },
-        error: function(xhr, status, error) {
-            Toast('error', 'Encountere error while deleting');
-        },
-        complete:function(){
-          table.ajax.reload();
-        }
-    });
-  });
-  $(document).on('click','.btn-approve', function(){
-    const id = $(this).data('id')
-    console.log(id);
-    $.ajax({
-        url: `/admin/purchase/approvepayout/${id}`, 
-        type: 'post',
-        headers: {
-          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
-        },
-        // data:JSON.stringify( { 
-        //     id:id,
-        //     status: newValue 
-        // }),
-        contentType: 'application/json', 
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') // Laravel CSRF token
-        },
-        success: function(response) {
-            Toast('success', 'Approved');
-        },
-        error: function(xhr, status, error) {
-            Toast('error', 'Encountere error while deleting');
-        },
-        complete:function(){
-          table.ajax.reload();
-        }
-    });
-  });
-  function validate(_data){
-    console.log(_data.count);
-    if(isInvalidValue(_data.product_id)) Toast('error','Select product');
-    if(isInvalidValue(_data.quantity)) Toast('error','Enter desire quantity');
-    if(_data.quantity>parseInt($('.total-available').html())) Toast('error','Stock is not enough');
-    if(isInvalidValue(_data.quantity)||isInvalidValue(_data.product_id)||_data.quantity>parseInt($('.total-available').html()))return false;
-    return true;
-    
-  }
+  
+
   $(document).on('change', '.status-dropdown', function() {
       const id = $(this).data('id'); // Get the row ID from data-id
       const newValue = $(this).val(); // Get the selected value

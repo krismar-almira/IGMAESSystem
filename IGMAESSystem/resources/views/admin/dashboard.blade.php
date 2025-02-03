@@ -43,6 +43,26 @@
       <canvas id="production_graph"></canvas>
     </div>
     <div class="container-3">
+      <div class="absolute right-20">
+        <button id="dropdownDefaultButton" data-dropdown-toggle="dropdown" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-1 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">Filter <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+          </svg>
+          </button>
+          <div id="dropdown" class="z-10 p-2 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700">
+            <label
+              for=""
+              class="block my-2 text-sm font-medium text-gray-900 dark:text-white"
+              >Partner Store(User)</label
+            >
+            <select
+              id='partner_store_select'
+              class="w-40 "
+            ></select>
+          </div>
+      </div>
+      <canvas id="return_graph"></canvas>
+    </div>
+    <div class="container-3">
       <canvas id="purchase_graph"></canvas>
     </div>
     <div class="container-4">

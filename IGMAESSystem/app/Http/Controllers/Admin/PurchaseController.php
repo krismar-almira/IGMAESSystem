@@ -90,13 +90,14 @@ class PurchaseController extends Controller
     }
     function Table(){
         $data = DB::table('purchases')
-                    ->select('purchases.id','purchase_statuses.name as status','users.name as user','products.name as product',DB::raw('SUM(count) as quantity'))
+                    ->select('purchases.id',"purchases.date_approve",'purchase_statuses.name as status','users.name as user','products.name as product',DB::raw('SUM(count) as quantity'))
                     ->leftJoin('purchase_details','purchase_details.purchase_id','purchases.id')
                     ->leftJoin('inventories', 'purchase_details.inventory_id','inventories.id')
                     ->leftJoin('products', 'products.id','inventories.product_id')
                     ->leftJoin('users', 'purchases.user_id','users.id')
                     ->leftJoin('purchase_statuses', 'purchases.purchase_status_id','purchase_statuses.id')
-                    ->groupBy('purchases.id','products.name','users.name');
+                    ->groupBy('purchases.id','products.name','users.name')
+                    ->orderByDesc('purchases.id');
                     
         if(Auth::user()->user_level_id==4){
             $data =$data->where('purchases.user_id',Auth::user()->id);
@@ -109,14 +110,19 @@ class PurchaseController extends Controller
         $purchase->purchase_status_id = $request->status;
         if($request->status==1){
             $purchase->isApprove = false;
-            $purchase->date_approve= null;
+            //$purchase->date_approve= null;
         }
         else{
             $purchase->isApprove = true;
-            if(!$purchase->date_approve)$purchase->date_approve= Carbon::now();
+            //if(!$purchase->date_approve)$purchase->date_approve= Carbon::now();
         }
         $purchase->save();
         return $purchase;
+    }
+    function approvePayout(Request $request){
+        $purchase = Purchase::find($request->id);
+        $purchase->date_approve= Carbon::now();
+        $purchase->save();
     }
     function delete($id){
         $purchase = Purchase::find($id);

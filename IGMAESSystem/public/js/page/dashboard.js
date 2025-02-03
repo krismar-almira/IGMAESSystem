@@ -7,6 +7,7 @@ $(function () {
   loadTopSellingTable();
   loadTopClientList();
   loadTopProducer();
+  loadreturntable(0);
   
   let colors = [
     'rgb(255, 99, 132)',
@@ -383,4 +384,76 @@ $(function () {
       });
     });
   }
+  let returnChart;
+  function loadreturntable(id) {
+    $.ajax({
+      type: 'get',
+      url: '/admin/dashboard/getreturndata/'+id,
+      dataType: 'json',
+      success: function (response) {
+        initializereturn(response);
+      },
+    });
+  }
+  
+  function initializereturn(res) {
+    //console.table(loadDatas(name_product, datas));
+    const ctx_production = document.getElementById('return_graph');
+    const labels = res.labels;
+    const data = {
+      labels: labels,
+      datasets: res.datasets,
+    };
+    const config = {
+      type: 'bar',
+      data: data,
+      options: {
+        plugins: {
+          title: {
+            display: true,
+            text: 'Return',
+            align: 'start',
+            font: { weight: 'bold', size: '20px' },
+            padding: 0,
+          },
+        },
+        responsive: true,
+        resizeDelay: 2,
+        maintainAspectRatio: false,
+        scales: {
+          x: {
+            stacked: true,
+          },
+          y: {
+            stacked: true,
+          },
+        },
+      },
+    };
+
+    returnChart = new Chart(ctx_production, config);
+  }
+  $('#partner_store_select').select2({
+    //tags: true,
+    dropdownPosition: 'below',
+    ajax: {
+      method: 'get',
+      url: '/admin/user/getUserSearch/',
+      dataType: 'json',
+      processResults: function (data) {
+        return {
+          results: $.map(data, function (item) {
+            return {
+              text: item.name,
+              id: item.id,
+            };
+          }),
+        };
+      },
+    },
+  });
+  $(document.body).on("change","#partner_store_select",function(){
+    returnChart.destroy();
+    loadreturntable(this.value);
+  });
 });

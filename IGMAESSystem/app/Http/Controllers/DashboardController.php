@@ -259,4 +259,57 @@ class DashboardController extends Controller
     }
     return response()->json($datas);
   }
+  function getReturnData($id){
+    $data=[];
+    $dates = Purchase::query()
+    ->selectRaw('MIN(date_approve) as firstDate, MAX(date_approve) as lastDate')
+    ->first();
+
+    $firstDate = Carbon::parse($dates->firstDate)->startOfMonth();
+    $lastDate = Carbon::parse($dates->lastDate)->startOfMonth();
+
+    $monthYearArray = [];
+    while ($firstDate->lessThanOrEqualTo($lastDate)) {
+        $monthYearArray[] = [
+            'M'=>$firstDate->format('M'),
+            'm'=>$firstDate->month,
+            'year'=>$firstDate->year,
+        ];
+        $firstDate->addMonth(); // Move to the next month
+    }
+    $products = Product::select('name', 'id')->get();
+    $labels = [];
+    foreach ($monthYearArray as $key) {
+      array_push($labels,$key['M'].'-'.$key['year']);
+    }
+    $datasets = [];
+    foreach ($products as $product) {
+      $temp=[];
+      $temp['label'] = $product['name'];
+      $datas = [];
+      foreach ($monthYearArray as $key) {
+        $d ='';
+        $d = DB::table('products')
+                  ->select('products.name as label', DB::raw('SUM(purchase_details.return_quantity) as total_count'))
+                  ->leftJoin('inventories', 'products.id', '=', 'inventories.product_id')
+                  ->leftJoin('purchase_details', 'purchase_details.inventory_id', '=', 'inventories.id')
+                  ->leftJoin('purchases', 'purchases.id', '=', 'purchase_details.purchase_id')
+                  ->groupBy('products.id')
+                  ->whereMonth('purchases.date_approve',$key['m'])
+                  ->whereYear('purchases.date_approve',$key['year'])
+                  ->where('products.id',$product['id']);
+        if($id!=0){
+          $d = $d->where('purchases.user_id',$id);
+        }
+        $d = $d->first();
+        $datas[] = $d ? (int)$d->total_count : 0;
+      }
+      $temp['data'] = $datas;
+      array_push($datasets, $temp);
+    }
+    return [
+      'labels'=>$labels,
+      'datasets'=>$datasets
+    ];
+  }
 }

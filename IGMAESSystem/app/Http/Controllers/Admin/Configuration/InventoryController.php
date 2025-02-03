@@ -92,35 +92,16 @@ class InventoryController extends Controller
   function Table(Request $request){
     $datas = '';
     $recordsFiltered='';
-    //return $request['search']['regex'];
-    //image, name, type, quantity, price
-    // if($request['search']['value']!=null){
-    //   $recordsFiltered = DB::table('inventories')
-    //                     ->leftJoin('products', 'inventories.product_id', '=', 'products.id')
-    //                     ->join('group_workers', 'group_workers.inventory_id', '=', 'inventories.id')
-    //                     ->where('products.name', 'like', '%' . $request['search']['value'] . '%')
-    //                     ->distinct('inventories.id')
-    //                     ->count('inventories.id');
-    //   $datas = DB::table('inventories')
-    //           ->select('inventories.id as id','inventories.date_entry','products.name as productname', 'inventories.quantity as quantity', 'inventories.quantity_sold as sold','inventories.expiration as expire','products.unit_measure',DB::raw("COUNT(*) as 'workers'"))
-    //           ->leftjoin('products','inventories.product_id','=','products.id')
-    //           ->join('group_workers', 'group_workers.inventory_id','=', 'inventories.id')
-    //           ->groupby('id')
-    //           ->where('products.name', 'like', '%'.$request['search']['value'].'%')
-    //           ->orderBy('inventories.date_entry','DESC')
-    //           ->offset($request['start'])->limit($request['length'])
-    //           ->get();
- 
       $datas = DB::table('inventories')
       ->select('inventories.id as id',
                 'inventories.date_entry',
+                'inventories.disposed',
                 'products.name as productname', 
                 'inventories.quantity as quantity', 
                 'inventories.quantity_sold as sold',
                 'inventories.expiration as expire',
                 'products.unit_measure',
                 DB::raw("COUNT(inventories.id) as 'workers'"),
-                
                 )
       ->leftjoin('products','inventories.product_id','=','products.id')
       ->join('group_workers', 'group_workers.inventory_id','=', 'inventories.id')
@@ -162,7 +143,9 @@ class InventoryController extends Controller
         $data->workers,
         $data->date_entry,
         $data->expire,
-        $data->qty_expired
+        $data->qty_expired,
+        $data->disposed
+
       ];
       array_push($arrays,$array);
     }
