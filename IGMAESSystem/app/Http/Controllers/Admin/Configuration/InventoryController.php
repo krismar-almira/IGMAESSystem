@@ -111,19 +111,20 @@ class InventoryController extends Controller
       ->where('products.name', 'like', '%'.$request['search']['value'].'%')
       ->get();
       foreach ($datas as &$key) {
-        $sold = PurchaseDetail::where('inventory_id', $key->id)->sum('count');
-        $key->sold=$sold;
-        if(Carbon::parse($key->expire)->lessThanOrEqualTo(Carbon::now())){
-          $key->qty_expired =  $key->quantity - $sold;
-        }else{
-          $key->qty_expired = 0;
-        }
-      $recordsFiltered = DB::table('inventories')
-                        ->leftJoin('products', 'inventories.product_id', '=', 'products.id')
-                        ->join('group_workers', 'group_workers.inventory_id', '=', 'inventories.id')
-                        ->distinct('inventories.id')
-                        ->count('inventories.id');
-    }
+          $sold = PurchaseDetail::where('inventory_id', $key->id)->sum('count');
+          $key->sold=$sold;
+          if(Carbon::parse($key->expire)->lessThanOrEqualTo(Carbon::now())){
+            $key->qty_expired =  $key->quantity - $sold;
+          }else{
+            $key->qty_expired = 0;
+          }
+          $key->available= $key->quantity  - $key->sold - $key->disposed - $key->qty_expired;
+        $recordsFiltered = DB::table('inventories')
+                          ->leftJoin('products', 'inventories.product_id', '=', 'products.id')
+                          ->join('group_workers', 'group_workers.inventory_id', '=', 'inventories.id')
+                          ->distinct('inventories.id')
+                          ->count('inventories.id');
+      }
     //return dd($datas);
 
     $recordsTotal = DB::table('inventories')
@@ -144,7 +145,9 @@ class InventoryController extends Controller
         $data->date_entry,
         $data->expire,
         $data->qty_expired,
-        $data->disposed
+        $data->disposed,
+        $data->available
+
 
       ];
       array_push($arrays,$array);

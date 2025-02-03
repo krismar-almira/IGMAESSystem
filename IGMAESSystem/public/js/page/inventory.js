@@ -270,6 +270,7 @@ $(function () {
       { visible: true, searchable: false,data:3 },
       { visible: true, searchable: false,data:7 },
       { visible: true, searchable: false,data:8 },
+      { visible: true, searchable: false,data:9 },
       { visible: true, searchable: false,data:4 },
       { visible: true, searchable: false,data:5, render:function(data){
         return formatDate(data);

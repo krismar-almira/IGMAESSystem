@@ -176,6 +176,7 @@
               <th scope="col" class="px-6 py-3">Sold</th>
               <th scope="col" class="px-6 py-3">Quantity Expired</th>
               <th scope="col" class="px-6 py-3">Dispose</th>
+              <th scope="col" class="px-6 py-3">Available</th>
               <th scope="col" class="px-6 py-3">Employee</th>
               <th scope="col" class="px-6 py-3">Date</th>
               <th scope="col" class="px-6 py-3">Expiration</th>
