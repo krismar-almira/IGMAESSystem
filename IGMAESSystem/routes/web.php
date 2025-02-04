@@ -35,6 +35,8 @@ Route::middleware(['AdminAccess'])->group(function () {
       Route::get('/individualemployee', [DashboardController::class, 'employeeInvdividualSalary']);
       Route::get('/productionemployee', [DashboardController::class, 'productionEmployee']);
       Route::get('/getreturndata/{id}', [DashboardController::class, 'getReturnData']);
+      Route::post('/getdailysales', [DashboardController::class, 'getDailyData']);
+
 
     });
     Route::prefix('user')->group(function () {

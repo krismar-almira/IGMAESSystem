@@ -8,7 +8,7 @@ $(function () {
   loadTopClientList();
   loadTopProducer();
   loadreturntable(0);
-  
+  loaddailysalestable(new Date);
   let colors = [
     'rgb(255, 99, 132)',
     'rgb(255, 159, 64)',
@@ -223,7 +223,7 @@ $(function () {
           },
           title: {
             display: true,
-            text: 'Purchase',
+            text: 'Sales',
             align: 'start',
             font: { weight: 'bold', size: '20px' },
             padding: 0,
@@ -456,4 +456,64 @@ $(function () {
     returnChart.destroy();
     loadreturntable(this.value);
   });
+  $('#filter_daily').on('change', function(){
+    loaddailysalestable($(this).val());
+  })
+  let dailySalesGraph;
+  function loaddailysalestable(date) {
+    $.ajax({
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+      },
+      type: 'post',
+      url: '/admin/dashboard/getdailysales/',
+      data: JSON.stringify({date:date}),
+      contentType: 'application/json',
+      dataType: 'json',
+      success: function (response) {
+        initializedailysales(response);
+      },
+    });
+  }
+  
+  function initializedailysales(res) {
+    if(dailySalesGraph){
+    dailySalesGraph.destroy();
+
+    }
+    const ctx_production = document.getElementById('sales_daily');
+    const labels = res.labels;
+    const data = {
+      labels: labels,
+      datasets: res.datasets,
+    };
+    const config = {
+      type: 'bar',
+      data: data,
+      options: {
+        plugins: {
+          title: {
+            display: true,
+            text: 'Daily Sales',
+            align: 'start',
+            font: { weight: 'bold', size: '20px' },
+            padding: 0,
+          },
+        },
+        responsive: true,
+        resizeDelay: 2,
+        maintainAspectRatio: false,
+        scales: {
+          x: {
+            stacked: true,
+          },
+          y: {
+            stacked: true,
+          },
+        },
+      },
+    };
+
+    dailySalesGraph = new Chart(ctx_production, config);
+  }
 });

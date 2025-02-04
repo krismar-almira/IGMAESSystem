@@ -315,4 +315,54 @@ class DashboardController extends Controller
       'datasets'=>$datasets
     ];
   }
+  public function getDailyData(Request $request) {
+    $firstDate = Carbon::parse($request->input('date'))->startOfMonth(); // Get first day of month
+    $lastDate = $firstDate->copy()->endOfMonth(); // Last day of the month
+
+    // Generate daily labels (e.g., '01 Jan', '02 Jan', ...)
+    $dateArray = [];
+    while ($firstDate->lessThanOrEqualTo($lastDate)) {
+        $dateArray[] = [
+            'full_date' => $firstDate->format('Y-m-d'),
+            'label' => $firstDate->format('d M'), // Format like "01 Jan"
+        ];
+        $firstDate->addDay(); // Move to the next day
+    }
+
+    // Fetch all products
+    $products = Product::select('name', 'id')->get();
+    
+    // Chart labels (days in the month)
+    $labels = array_column($dateArray, 'label');
+
+    // Prepare dataset for Chart.js
+    $datasets = [];
+    foreach ($products as $product) {
+        $temp = [
+            'label' => $product->name,
+            'data' => []
+        ];
+
+        foreach ($dateArray as $key) {
+            $sales = DB::table('products')
+                ->select(DB::raw('SUM(purchase_details.count) as total_count'))
+                ->leftJoin('inventories', 'products.id', '=', 'inventories.product_id')
+                ->leftJoin('purchase_details', 'purchase_details.inventory_id', '=', 'inventories.id')
+                ->leftJoin('purchases', 'purchases.id', '=', 'purchase_details.purchase_id')
+                ->whereDate('purchases.date_purchase', $key['full_date']) // Daily filter
+                ->where('products.id', $product->id)
+                ->groupBy('products.id')
+                ->first();
+
+            $temp['data'][] = $sales ? (int) $sales->total_count : 0;
+        }
+
+        $datasets[] = $temp;
+    }
+
+    return [
+        'labels' => $labels, // Days of the month
+        'datasets' => $datasets // Sales data per product
+    ];
+}
 }
