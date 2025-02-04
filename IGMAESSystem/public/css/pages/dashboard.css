@@ -20,6 +20,8 @@
   transition: transform 0.5s ease-out 0.1s;
   transition: background-color 0.5s ease-out;
   height: 250px;
+  overflow: hidden;
+  overflow-y: auto;
 }
 .dashboard_container .container-1 .cont-graph1 .sub_con {
   height: calc(100% - 15px);
