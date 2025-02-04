@@ -98,68 +98,86 @@
     <div style="page-break-after: always;">
     <div style="width: 100%; padding: 20px; display: flex; justify-content: space-between; font-family: 'Courier New', Courier, monospace;">
       <h2 style="display: inline-block" class="text-gray-700">{{ $title }}</h1>
-      <h5 style="display: inline-block;" class="text-gray-700">Date: {{$content->start_date}} - {{$content->end_date}}</h6>
+      <h5 style="display: inline-block;" class="text-gray-700">Date: {{$content->start_date}} - {{$content->end_date}}</h5>
     </div>
+  
+    <h6>Employee: {{$_content->user->name}}</h6>
     <table>
       <div class="relative overflow-x-auto">
         <table
           class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400"
         >
           <thead
-            class="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400"
+            {{-- class="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400" --}}
           >
-            <tr>
-              <th scope="col" class="px-6 py-3 rounded-s-lg">Employee name</th>
-              <th scope="col" class="px-6 py-3"></th>
-              <th scope="col" class="px-6 py-3 rounded-e-lg">Total</th>
-            </tr>
+            {{-- <tr>
+              <th scope="col" class="px-6 py-3">{{$_content->user->name}}</th>
+            </tr> --}}
           </thead>
           <tbody>
             <tr class="bg-white dark:bg-gray-800">
-              <th
+              {{-- <th
                 scope="row"
                 class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
               >
-                {{$_content->user->name}}
-              </th>
+                
+              </th> --}}
               <td class="px-6 py-4">
-                <table>
-                  <tr>
-                    <th scope="col" class="px-6 py-3 rounded-s-lg">
-                      Product Name
-                    </th>
-                    <th scope="col" class="px-6 py-3">Date Purchase</th>
-                    <th scope="col" class="px-6 py-3">Quantity Sold</th>
-                    <th scope="col" class="px-6 py-3">Total Quantity</th>
-                    <th scope="col" class="px-6 py-3">Employee Share / Inventory</th>
-                    <th scope="col" class="px-6 py-3 rounded-e-lg">Share (Quantity Sold/Total Quantity)*Employee Share</th>
+                <table class='absolute'>
+                  <thead style="" class="text-gray-700 bg-gray-100 ">
+                    <tr>
+                      <th scope="col" class="px-6 py-3 rounded-s-lg ">
+                        Product Name
+                      </th>
+                      <th scope="col" class="px-6 py-3">Date Purchase</th>
+                      <th scope="col" class="px-6 py-3">Quantity Sold</th>
+                      <th scope="col" class="px-6 py-3">Total Quantity</th>
+                      <th scope="col" class="px-6 py-3">Employee Share / Inventory</th>
+                      <th scope="col" class="px-6 py-3 rounded-e-lg">Share (Quantity Sold/Total Quantity)*Employee Share</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @foreach($actual as $_actual)
+                    @if($_actual->name===$_content->user->name)
+                    <tr>
+                      <td style="text-align: center">{{$_actual->product}}</td>
+                      <td style="text-align: center">{{$_actual->date_pruchase}}</td>
+                      <td style="text-align: center">{{$_actual->sold}}</td>
+                      <td style="text-align: center">{{$_actual->quantity}}</td>
+                      <td style="text-align: center">{{$_actual->employee_share}}</td>
+                      <td style="text-align: center">{{$_actual->salary}}</td>
 
-                  </tr>
-                  @foreach($actual as $_actual)
-                  @if($_actual->name===$_content->user->name)
-                  <tr>
-                    <td>{{$_actual->product}}</td>
-                    <td>{{$_actual->date_pruchase}}</td>
-                    <td>{{$_actual->sold}}</td>
-                    <td>{{$_actual->quantity}}</td>
-                    <td>{{$_actual->employee_share}}</td>
-                    <td>{{$_actual->salary}}</td>
-
-                    {{-- <td style="display: flex; justify-content: end;">{{number_format((float)$_actual->employee_share, 2, '.', '')}}</td> --}}
-                  </tr>
-                  @endif @endforeach
+                      {{-- <td style="display: flex; justify-content: end;">{{number_format((float)$_actual->employee_share, 2, '.', '')}}</td> --}}
+                    </tr>
+                    @endif @endforeach
+                  </tbody>
+                  <tfoot>
+                    <tfoot>
+                      <tr class="font-semibold text-gray-900 dark:text-white">
+                        <th style="text-align: center">total</th>
+                        <td></td>
+                        <td ></td>
+                        <td></td>
+                        <td></td>
+                        <td style="text-align: center">Php. {{$_content->amount}}</td>
+          
+                      </tr> 
+                    </tfoot>
+                  </tfoot>
                 </table>
               </td>
-              <td class="px-6 py-4">Php. {{$_content->amount}}</td>
+              {{-- <td class="px-6 py-4">Php. {{$_content->amount}}</td> --}}
             </tr>           
           </tbody>
-          <tfoot>
-            <!-- <tr class="font-semibold text-gray-900 dark:text-white">
+          {{-- <tfoot>
+            <tr class="font-semibold text-gray-900 dark:text-white">
               <th scope="row" class="px-6 py-3 text-base">Total</th>
-              <td class="px-6 py-3">3</td>
-              <td class="px-6 py-3">21,000</td>
-            </tr> -->
-          </tfoot>
+              <td class="px-6 py-3"></td>
+              <td class="px-6 py-3"></td>
+              <td class="px-6 py-4">Total Php. {{$_content->amount}}</td>
+
+            </tr> 
+          </tfoot> --}}
           
         </table>
         <div style="margin-top: 30px;">

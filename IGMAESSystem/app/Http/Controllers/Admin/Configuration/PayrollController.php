@@ -147,6 +147,7 @@ class PayrollController extends Controller
     // return $dompdf->stream('document.pdf');
     //return $data;
     //return $data;
+    // /return view('pdf.document', $data);
     $pdf = PDF::loadView('pdf.document', $data);
        
     return $pdf->download('payroll.pdf');
