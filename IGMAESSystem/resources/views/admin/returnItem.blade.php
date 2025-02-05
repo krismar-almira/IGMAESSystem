@@ -41,6 +41,7 @@
               </div>
               <!-- Modal body -->
               <form id="frm_modal" class="p-4 md:p-5">
+                
                 <div class="grid gap-4 mb-4 grid-cols-2">
                   <div class="col-span-2">
                     <div id="parent" class="w-full h-auto">
@@ -119,6 +120,10 @@
                   >
                     Save
                   </button>
+                </div>
+                <div>
+                  <p>Return Request:<b id='total_req_count'>0</b></p>
+                  <p>Return Approve:<b id='total_aprove_count'>0</b></p>
                 </div>
               </form>
             </div>

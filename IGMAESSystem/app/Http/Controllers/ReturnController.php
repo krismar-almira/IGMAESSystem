@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Inventory;
 use App\Models\PurchaseDetail;
+use App\Models\ReturnRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -35,8 +36,11 @@ class ReturnController extends Controller
         return ['data'=>$data];
     }
     function ReturnItem(Request $request){
+        $total = 0;
+        $purchase_id = 0;
         foreach($request->all() as $req){
             $pd = PurchaseDetail::find($req['id']);
+            $purchase_id = $pd->purchase_id;
             $pd->count = $pd['count']-$req['value'];
             $pd->return_quantity = $pd->return_quantity + $req['value'];
             $pd->save();
@@ -45,7 +49,20 @@ class ReturnController extends Controller
                 $inventory->disposed += $req['value'];
                 $inventory->save();
             }
+            $total+=$req['value'];
         }
+        $rtr = ReturnRequest::where('purchase_id',$purchase_id)->first();
+        $rtr->approve_count += $total;
+        $rtr->count -= $total;
+        $rtr->save();
+        return true;
+    }
+    function ReturnRequest(Request $request){
+        ReturnRequest::create([
+            'purchase_id'=>$request->purchase_id,
+            'approve_count'=>0,
+            'count'=> $request->count
+        ]);
         return true;
     }
 }

@@ -21,7 +21,7 @@ Route::get('/login',[LoginController::class,'ViewLoginPage']);
 Route::post('/login', [LoginController::class,'Login']);
 Route::post('/logout', [LoginController::class,'Logout']);
 
-Route::middleware(['AdminAccess'])->group(function () {
+Route::middleware(['AdminAccess'])->group(function () { //CheckAuth
   Route::get('/', function(){return redirect('/admin/dashboard');});
   Route::prefix('/admin')->group(function () {
     Route::prefix('/dashboard')->group(function () {
@@ -36,8 +36,6 @@ Route::middleware(['AdminAccess'])->group(function () {
       Route::get('/productionemployee', [DashboardController::class, 'productionEmployee']);
       Route::get('/getreturndata/{id}', [DashboardController::class, 'getReturnData']);
       Route::post('/getdailysales', [DashboardController::class, 'getDailyData']);
-
-
     });
     Route::prefix('user')->group(function () {
       Route::get('/registration',[UserRegistrationController::class, 'index'])->middleware(AdminOnly::class);
@@ -81,7 +79,6 @@ Route::middleware(['AdminAccess'])->group(function () {
       Route::post('/request', [PurchaseController::class,'add']);
       Route::post('/approvepayout/{id}', [PurchaseController::class,'approvePayout']);
       Route::delete('/request/{id}', [PurchaseController::class,'delete']);
-
       Route::put('/request/status', [PurchaseController::class,'StatusChange'])->middleware(AdminOnly::class);
 
       Route::get('/table', [PurchaseController::class,'Table']);
@@ -101,7 +98,8 @@ Route::middleware(['AdminAccess'])->group(function () {
       Route::get('/',[ReturnController::class,'view'])->middleware(AdminOnly::class);
       Route::get('/table', [ReturnController::class,'Table']);
       Route::post('/savereturn', [ReturnController::class,'ReturnItem']);
-
+      Route::post('/request', [ReturnController::class,'ReturnRequest']);
+      
       Route::get('/inventoryavail/{id}', [PurchaseController::class,'inventoryAvailByProductId']);
     });
     //Route::get('/', [UserLevelController::class, 'GetAll']);

@@ -17,16 +17,7 @@ class LoginController extends Controller
       'username' => 'required',
       'password' => 'required'
     ]);
-    // $user = new User();
-    // $user->username = 'gad';
-    // $user->password = 'gad';
-    // $user->firstname = 'gad';
-    // $user->lastname = 'gad';
-    // $user->idnumber = 'gad';
-    // $user->office_id = 1;
-    // $user->department_id= 1;
-    // $user->userlevel_id = 1;
-    // $user->save();
+
 
     if(Auth()->attempt(['username' => $validated['username']
                             ,'password' => $validated['password']

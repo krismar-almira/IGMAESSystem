@@ -165,6 +165,11 @@
               <!-- Modal body -->
               <form id="frm_modal" class="p-4 md:p-5">
                 <div class="grid gap-4 mb-4 grid-cols-2">
+                  <div>
+                    <p>Return Request:<b id='total_req_count'>0</b></p>
+                    <p>Return Approve:<b id='total_aprove_count'>0</b></p>
+
+                  </div>
                   <div class="col-span-2">
                     <div id="parent" class="w-full h-auto">
                       <label
@@ -221,6 +226,31 @@
                 <p class="inline-block">Total Amount:</p>
                 <p class="total-amount inline-block">0</p>
                 
+                  <button id="dropdownDefaultButton" data-dropdown-toggle="dropdown" class="ml-10 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-3 py-1 text-center inline-flex items-center" type="button">Return Item <svg class="w-2.5 h-2.5 ms-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
+                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
+                  </svg>
+                  </button>
+                  <div id="dropdown" class="z-10 hidden bg-white divide-y p-2 divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700">
+                    <label
+                    for=""
+                    class="block my-2 mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    >Number of item to return</label
+                    >
+                    <input
+                          type="number"
+                          id="inpt_qty_return"
+                          class="bg-gray-50 border mt-2 border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                          placeholder=""
+                          required=""
+                        />
+                    <button
+                      id="btn_submit_return"
+                      class="block mt-2 text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-3 py-2 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
+                      type="button"
+                    >
+                      Submit
+                    </button>
+                  </div>
               </form>
               
             </div>

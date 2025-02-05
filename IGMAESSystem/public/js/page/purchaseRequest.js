@@ -260,6 +260,7 @@ $(function () {
   $(document).on('click','.btn-preview', async function(){
     openModalPreview();
     StartLoading();
+    crudId=$(this).data('id');
     let res = await pullPreviewData($(this).data('id'));
     selectedData  = res;
     CloseLoading();
@@ -269,6 +270,17 @@ $(function () {
   function loadDataToPreview(data){
     $('#product_name').val(data.product);
     $('#prv_qty').val(parseInt(data.quantity));
+    data.rtr?$('#total_req_count').html(data.rtr.count):$('#total_req_count').html(0)
+    data.rtr?$('#total_aprove_count').html(data.rtr.approve_count):$('#approve_count').html(0)
+    ;
+    $('#approve_count').html();
+    if(data.rtr || data.date_approve || userlevel != 'Partner Store'){
+      $('#dropdownDefaultButton').addClass('hidden');
+    }else{
+      $('#dropdownDefaultButton').removeClass('hidden');
+
+    }
+    
     if(isInvalidValue(data.items))return;
     let htmlToAdd='';
     data.items.forEach(x=>{
@@ -431,6 +443,32 @@ $(function () {
           }
       });
   });
+
+  $('#inpt_qty_return').on('keyup', function(){
+    console.log($(this).val());
+    if( parseInt($(this).val())>parseInt($('#prv_qty').val())){
+      $(this).val(0);
+      Toast('error', 'Return quantity should not be higher than the purchase');
+    }
+  })
+  $('#btn_submit_return').on('click', function(){
+    //$(this).attr('disabled', true);
+    $.ajax({
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+      },
+      type: 'post',
+      url: '/admin/return/request',
+      data: {count:parseInt($('#inpt_qty_return').val()), purchase_id:crudId},
+      dataType: 'json',
+      success: function (response) {
+        console.log(response);
+        window.location.reload();
+      },
+      error: function (response) {
+      },
+    });
+  })
 });
 
 

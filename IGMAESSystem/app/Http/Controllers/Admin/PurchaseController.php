@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Models\PurchaseDetail;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Models\ReturnRequest;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
@@ -130,8 +131,9 @@ class PurchaseController extends Controller
         return $purchase;
     }
     function PreviewData($id){
+        $rtr = ReturnRequest::where('purchase_id',$id)->first();
         $data = DB::table('purchases')
-                ->select('purchases.id','purchase_details.inventory_id as inventory_id','purchase_statuses.name as status','users.name as user','products.name as product',DB::raw('SUM(count) as quantity'))
+                ->select('purchases.id','purchases.date_approve','purchase_details.inventory_id as inventory_id','purchase_statuses.name as status','users.name as user','products.name as product',DB::raw('SUM(count) as quantity'))
                 ->leftJoin('purchase_details','purchase_details.purchase_id','purchases.id')
                 ->leftJoin('inventories', 'purchase_details.inventory_id','inventories.id')
                 ->leftJoin('products', 'products.id','inventories.product_id')
@@ -141,6 +143,7 @@ class PurchaseController extends Controller
                 ->where('purchases.id',$id)
                 ->first();
         $data->items = PurchaseDetail::where('purchase_id', $id)->get();
+        $data->rtr = $rtr;
         return $data;
     }
 }

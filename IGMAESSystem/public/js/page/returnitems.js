@@ -204,6 +204,8 @@ $(function () {
     loadDataToPreview(res);
   });
   function loadDataToPreview(data){
+    data.rtr?$('#total_req_count').html(data.rtr.count):$('#total_req_count').html(0)
+    data.rtr?$('#total_aprove_count').html(data.rtr.approve_count):$('#approve_count').html(0)
     $('#product_name').val(data.product);
     $('#prv_qty').val(parseInt(data.quantity));
     $("#inventoryItems tr:not(:first)").remove();
@@ -233,10 +235,23 @@ $(function () {
                 </tr>`
     });
     $(document).on('keyup', '.input_return', function(){
+      console.log($('#total_req_count').first());
+      const total = 
+              parseInt($('#total_req_count').first().html()) - 
+              parseInt($('#total_aprove_count').first().html());
+
       if($(this).data().count<$(this).val()){
         console.log('invalid');
         Toast('error', 'Invalid Value')
         $(this).val(0);
+      }
+      let _sum =0;
+      $('.input_return').each(function(){
+        _sum+=parseInt($(this).val());
+      })
+      if(_sum>total){
+        $(this).val(0);
+        Toast('error', 'The total return of your input is greater than the partner store request.');
       }
     })
     $('#inventoryItems').append(htmlToAdd);
@@ -259,7 +274,7 @@ $(function () {
         {
           id: _id,
           value: $(this).val(),
-          dispose:$('input[type="checkbox"]').filter(`[data-id="${_id}"]`).prop('checked')
+          dispose:$('input[type="checkbox"]').filter(`[data-id="${_id}"]`).prop('checked'),
         }
       );
     });
