@@ -39,7 +39,7 @@ class data_seeder extends Seeder
           'filename' => 'na',
           'designation' => 'super admin',
           'username'=>'igmaesadmin',
-          'user_level_id' => 3,
+          'user_level_id' => 2,
         ],
         [
             'id' => 11,
